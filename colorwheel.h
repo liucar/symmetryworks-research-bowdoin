@@ -14,7 +14,7 @@
 
 #include "geomath.h"
 
-#define image_dim 300
+#define image_dim 3000
 
 const unsigned int ICOS_FACES_SIZE = 20;
 const unsigned int ZONE_VECT_SIZE = 32;

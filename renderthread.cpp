@@ -66,7 +66,7 @@ void RenderThread::run()
         double outputWidth = bottomRightXValue - topLeftXValue;
         double outputHeight = bottomRightYValue - topLeftYValue;
         
-        int translated = bottomRightXValue;
+        int translated = topLeftXValue;
         std::complex<double> fout;
         QPoint topLeft = this->topLeft;
         QVector<QVector<QRgb>> colorMap(outputWidth, QVector<QRgb>(outputHeight));
