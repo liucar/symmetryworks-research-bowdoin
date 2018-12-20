@@ -491,8 +491,8 @@ void Interface::initPatternType()
     functionSel->addItem("Original");
     
     // color wheel selector
-    colorwheelSel->addItem("IcosColor");
-    colorwheelSel->addItem("IcosColorC");
+//    colorwheelSel->addItem("IcosColor");
+//    colorwheelSel->addItem("IcosColorC");
     colorwheelSel->addItem("StCol");
     colorwheelSel->addItem("StColC");
     colorwheelSel->addItem("StCol35");

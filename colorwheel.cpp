@@ -46,30 +46,24 @@ QRgb ColorWheel::operator() (std::complex<double> zin)
     switch(currentSel)
     {
         case 0:
-            col=IcosColor(zin);
-            break;
-        case 1:
-            col=IcosColorC(zin);
-            break;
-        case 2:
             col=StCol(zin);
             break;
-        case 3:
+        case 1:
             col=StColC(zin);
             break;
-        case 4:
+        case 2:
             col=StCol35(zin);
             break;
-        case 5:
+        case 3:
             col=ZoneCol(zin);
             break;
-        case 6:
+        case 4:
             col=SectCol(zin);
             break;
-        case 7:
+        case 5:
             col=Sect6Col(zin);
             break;
-        case 8:
+        case 6:
             col=WinCol(zin);
             break;
         case 9:
@@ -86,48 +80,48 @@ void ColorWheel::loadImage(QString filename)
     image = raw.scaled(image_dim, image_dim, Qt::IgnoreAspectRatio, Qt::FastTransformation);
 }
 
-QRgb ColorWheel::IcosColor(std::complex<double> zin)
-{
-    QVector3D V;
-    int Tag;
-    double test,compare;
+//QRgb ColorWheel::IcosColor(std::complex<double> zin)
+//{
+//    QVector3D V;
+//    int Tag;
+//    double test,compare;
     
     
-    V = tilt(stereo(zin));
-    test = 0.0;
-    for(unsigned int n = 0; n < ICOS_FACES_SIZE; n++)
-    {
-        compare = dotProduct(V, icosFaces[n]);
-        if(compare > test)
-        {
-            Tag = n;
-            test = compare;
-        }
-    }
+//    V = tilt(stereo(zin));
+//    test = 0.0;
+//    for(unsigned int n = 0; n < ICOS_FACES_SIZE; n++)
+//    {
+//        compare = dotProduct(V, icosFaces[n]);
+//        if(compare > test)
+//        {
+//            Tag = n;
+//            test = compare;
+//        }
+//    }
     
-    return RgbFromVec3(icosFaces[Tag]);
-}
+//    return RgbFromVec3(icosFaces[Tag]);
+//}
 
-QRgb ColorWheel::IcosColorC(std::complex<double> zin)
-{
-    QVector3D V;
-    int Tag;
-    double test,compare;
+//QRgb ColorWheel::IcosColorC(std::complex<double> zin)
+//{
+//    QVector3D V;
+//    int Tag;
+//    double test,compare;
     
-    V = tilt(stereo(zin));
-    test = 0.0;
-    for(unsigned int n = 0; n < ICOS_FACES_SIZE; n++)
-    {
-        compare = dotProduct(V, icosFaces[n]);
-        if(compare > test)
-        {
-            Tag = n;
-            test = compare;
-        }
-    }
+//    V = tilt(stereo(zin));
+//    test = 0.0;
+//    for(unsigned int n = 0; n < ICOS_FACES_SIZE; n++)
+//    {
+//        compare = dotProduct(V, icosFaces[n]);
+//        if(compare > test)
+//        {
+//            Tag = n;
+//            test = compare;
+//        }
+//    }
     
-    return RgbFromVec3(cubeRootVec(icosFaces[Tag]));
-}
+//    return RgbFromVec3(cubeRootVec(icosFaces[Tag]));
+//}
 
 QRgb ColorWheel::StCol(std::complex<double> zin)
 {
