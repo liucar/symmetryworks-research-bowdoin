@@ -1230,6 +1230,8 @@ void Interface::selectColorWheel()
     updatePreviewDisplay();
 }
 
+// user uploads image
+// case 9 in colorwheel.cpp
 void Interface::selectImage()
 {
     colorwheelSel->setEnabled(false);
