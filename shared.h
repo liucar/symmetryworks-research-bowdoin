@@ -22,7 +22,7 @@ const int DEFAULT_OUTPUT_HEIGHT = 1000;
 const double PREVIEW_SCALING = 0.4;
 const int PARAMETER_SEPARATOR_LENGTH = 10;
 
-//struct that holds information about image and output properties
+//struct that holds information about image and output dimensions
 struct Settings
 {
     double Width = DEFAULT_WORLD_WIDTH;
