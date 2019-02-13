@@ -45,3 +45,5 @@ HEADERS  += \
 
 RESOURCES += \
     softwareresources.qrc
+
+FORMS +=

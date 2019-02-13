@@ -6,9 +6,9 @@ ControllerThread::ControllerThread(AbstractFunction *function, ColorWheel *color
     
     numThreadsActive = 0;
     
-    NUM_THREADS = idealThreadCount() != -1 ? idealThreadCount() : 8;
+    //NUM_THREADS = idealThreadCount() != -1 ? idealThreadCount() : 8;
     
-    //NUM_THREADS = 1;         //for testing
+    NUM_THREADS = 1;         //for testing
     
     restart = false;
     abort = false;

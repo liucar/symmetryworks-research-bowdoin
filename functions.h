@@ -11,12 +11,12 @@
 #include "geomath.h"
 #include "display.h"
 
-class AbstractFunction      //this is the base class for all other classes that follow in this file;
-{                           //it defines many of the member functions that we needed for all of the
+class AbstractFunction    //this is the base class for all other classes that follow in this file;
+{                         //it defines many of the member functions that we needed for all of the
 public:                   //derived classes
     
     //CONSTRUCTORS
-    AbstractFunction() { terms = 1; refresh(); }
+    AbstractFunction() { terms = 1; refresh(); T = 0; }
     AbstractFunction(unsigned int in_terms) { terms = in_terms; refresh(); }
     AbstractFunction(QVector<coeffpair> &in_coeffs, QVector<freqpair> &in_freqs);
     virtual ~AbstractFunction(){;}
@@ -29,6 +29,8 @@ public:                   //derived classes
     int getM(unsigned int &i) const;
     double getR(unsigned int &i) const;
     double getA(unsigned int &i) const;
+    double getT() { return T; }
+    double getWaveVelocity() { return waveVelocity; }
     double getScaleR() const { return scale.R(); }
     double getScaleA() const { return scale.A(); }
     
@@ -39,6 +41,8 @@ public:                   //derived classes
     void setM(unsigned int &i, int &val);
     void setR(unsigned int &i, double &val);
     void setA(unsigned int &i, double &val);
+    void setT(double Tval) { T = Tval; }
+    void setWaveVelocity(double val) { waveVelocity = val; }
     void setScaleR(double &val);
     void setScaleA(double &val);
     void setNumTerms(int &val);
@@ -53,6 +57,7 @@ protected:
     QVector<freqpair> freqs;
     unsigned int terms;
     coeffpair scale;
+    double T, waveVelocity;
     
     // PRIVATE MEMBER FUNCTIONS
     void initWithVectors(QVector<coeffpair> &in_coeffs, QVector<freqpair> &in_freqs);
@@ -165,8 +170,8 @@ public:
 ////////////////////////////////////////////////////////////////
 
 
-#define Xhex3 (2*pi*x+2*pi*y/q3)
-#define Yhex3 (4*pi*y/q3)
+#define Xhex3 (x*(2.0*F2-F1)/q3+F1*y)
+#define Yhex3 (x*(F2-2.0*F1)/q3+F2*y)
 
 class hex3Function : public AbstractFunction
 {
@@ -235,8 +240,9 @@ public:
 };
 ////////////////////////////////////////////////////////////////
 
-#define Xhex6 (2*pi*x+2*pi*y/q3)
-#define Yhex6 (4*pi*y/q3)
+
+#define Xhex6 (x*(2.0*F2-F1)/q3+F1*y)
+#define Yhex6 (x*(F2-2.0*F1)/q3+F2*y)
 
 class hex6Function : public AbstractFunction
 {
@@ -395,9 +401,17 @@ public:
 
 #define Krhombic 1.6
 #define Lrhombic 1
+//Commented out use a wider cell. New ones are for omega = phi \pm I
 
-#define Xrhombic (pi * (y/Krhombic + x/Lrhombic) )
-#define Yrhombic (pi * (y/Krhombic - x/Lrhombic) )
+//#define Xrhombic (x*(2*F1-3*F2)/q5 + F1*y )
+//#define Yrhombic (x*(3*F1-2*F2)/q5 + F2*y )
+
+
+//#define Xrhombic (x*(-2.0*F1-3.0*F2)/q5 + F1*y )
+//#define Yrhombic (x*(3.0*F1+2.0*F2)/q5 + F2*y )
+
+#define Xrhombic (x*(-F1/2.0 - F2*TPhi) + F1*y )
+#define Yrhombic (x*(F1*TPhi+F2*y) + F2*y )
 
 class rhombicFunction : public AbstractFunction
 {
@@ -419,8 +433,15 @@ public:
 #define Krhombic2 1.6
 #define Lrhombic2 1
 
-#define Xrhombic2 (pi * (x/Krhombic2 + y/Lrhombic2) )
-#define Yrhombic2 (pi * (x/Krhombic2 - y/Lrhombic2) )
+
+//#define Xrhombic2 (x*(2*F1-3*F2)/q5 + F1*y )
+//#define Yrhombic2 (x*(3*F1-2*F2)/q5 + F2*y )
+#define Xrhombic2 (x*(-F1/2.0 - F2*TPhi) + F1*y )
+#define Yrhombic2 (x*(F1*TPhi+F2*y) + F2*y )
+
+
+#define Xrhombic2 (x*(-2.0*F1-3.0*F2)/q5 + F1*y )
+#define Yrhombic2 (x*(3.0*F1+2.0*F2)/q5 + F2*y )
 
 class rhombicpairedFunction : public AbstractFunction
 {
@@ -453,8 +474,8 @@ public:
 
 ////////////////////////////////////////////////////////////////
 
-#define Xsquare (2*pi*x)
-#define Ysquare (2*pi*y)
+#define Xsquare (F1*x+F2*y)
+#define Ysquare (-F2*x+F1*y)
 
 class squareFunction : public AbstractFunction
 {

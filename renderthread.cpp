@@ -56,7 +56,7 @@ void RenderThread::run()
     forever {
         mutex.lock();
         
-        double worldX, worldY;
+        double worldX, worldY,ang;
         double worldYStart1 = this->worldYStart1;
         double worldYStart2 = this->worldYStart2;
         double worldXStart = this->worldXStart;
@@ -66,7 +66,7 @@ void RenderThread::run()
         double outputWidth = bottomRightXValue - topLeftXValue;
         double outputHeight = bottomRightYValue - topLeftYValue;
         
-        int translated = topLeftXValue;
+        int translated = bottomRightXValue;
         std::complex<double> fout;
         QPoint topLeft = this->topLeft;
         QVector<QVector<QRgb>> colorMap(outputWidth, QVector<QRgb>(outputHeight));
@@ -90,10 +90,10 @@ void RenderThread::run()
                 
                 //run the point through our mathematical function
                 //...then convert that complex output to a color according to our color wheel
-                
-                fout = (*currFunction)(worldX,worldY);
-                QRgb color = (*currColorWheel)(fout);
-                
+                ang=qAtan2(worldY,worldX)-2*pi*(F1/F2)*currFunction->getT();
+                fout = (*currFunction)(qLn(qSqrt(worldX*worldX+worldY*worldY)),ang);  // math function to get complex coordinate
+                QRgb color = (*currColorWheel)(fout);   // colorification from complex coordinate
+
                 if (y % 10 == 0 && x % 10 == 0) {
                     emit newImageDataPoint(fout);
                 }

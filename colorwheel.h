@@ -14,8 +14,8 @@
 
 #include "geomath.h"
 
-#define image_dim 3000
-
+//#define image_dim 3000
+const int image_dim=2000;
 const unsigned int ICOS_FACES_SIZE = 20;
 const unsigned int ZONE_VECT_SIZE = 32;
 
@@ -43,8 +43,8 @@ private:
     QColor overflowColor;
     
     // COLOR WHEEL FUNCTIONS
-//    QRgb IcosColor(std::complex<double> zin);
-//    QRgb IcosColorC(std::complex<double> zin);
+    QRgb IcosColor(std::complex<double> zin);
+    QRgb IcosColorC(std::complex<double> zin);
     QRgb StCol(std::complex<double> zin);
     QRgb StColC(std::complex<double> zin);
     QRgb StCol35(std::complex<double> zin);
