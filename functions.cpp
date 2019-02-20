@@ -300,6 +300,8 @@ std::complex<double> hex3Function::bundle(double &x, double &y, unsigned int &i)
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xhex3 = (x*(2.0*F2-F1)/q3+F1*y);
+    double Yhex3 = (x*(F2-2.0*F1)/q3+F2*y);
     std::complex<double> part1 = ei(N*Xhex3 + M*Yhex3);
     std::complex<double> part2 = ei((M)*Xhex3 - (N+M)*Yhex3);
     std::complex<double> part3 = ei(-(N+M)*Xhex3 + (N)*Yhex3);
@@ -330,6 +332,8 @@ std::complex<double> p31mFunction::bundle(double &x, double &y, unsigned int &i)
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xhex3 = (x*(2.0*F2-F1)/q3+F1*y);
+    double Yhex3 = (x*(F2-2.0*F1)/q3+F2*y);
     std::complex<double> part1 = ei(N*Xhex3 + M*Yhex3)+ei(M*Xhex3 + N*Yhex3);
     std::complex<double> part2 = ei((M)*Xhex3 - (N+M)*Yhex3)+ei(-(N+M)*Xhex3 + M*Yhex3);
     std::complex<double> part3 = ei(-(N+M)*Xhex3 + (N)*Yhex3)+ei(N*Xhex3 - (N+M)*Yhex3);
@@ -358,6 +362,8 @@ std::complex<double> p3m1Function::bundle(double &x, double &y, unsigned int &i)
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xhex3 = (x*(2.0*F2-F1)/q3+F1*y);
+    double Yhex3 = (x*(F2-2.0*F1)/q3+F2*y);
     std::complex<double> part1 = ei(N*Xhex3 + M*Yhex3)+ei(-M*Xhex3 - N*Yhex3);
     std::complex<double> part2 = ei((M)*Xhex3 - (N+M)*Yhex3)+ei((N+M)*Xhex3 - (M)*Yhex3);
     std::complex<double> part3 = ei(-(N+M)*Xhex3 + (N)*Yhex3)+ei(-(N)*Xhex3 + (N+M)*Yhex3);
@@ -387,6 +393,8 @@ std::complex<double> hex3CTFunction::bundle(double &x, double &y, unsigned int &
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xhex3 = (x*(2.0*F2-F1)/q3+F1*y);
+    double Yhex3 = (x*(F2-2.0*F1)/q3+F2*y);
     std::complex<double> part1 = ei(N*Xhex3 + M*Yhex3);
     std::complex<double> part2 = ei((M)*Xhex3 - (N+M)*Yhex3-2.0*pi/3.0);
     std::complex<double> part3 = ei(-(N+M)*Xhex3 + (N)*Yhex3-4.0*pi/3.0);
@@ -417,6 +425,8 @@ std::complex<double> hex6Function::bundle(double &x, double &y, unsigned int &i)
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xhex6 = (x*(2.0*F2-F1)/q3+F1*y);
+    double Yhex6 = (x*(F2-2.0*F1)/q3+F2*y);
     std::complex<double> part1 = qCos(N*Xhex6 + M*Yhex6);
     std::complex<double> part2 = qCos((M)*Xhex6 - (N+M)*Yhex6);
     std::complex<double> part3 = qCos(-(N+M)*Xhex6 + (N)*Yhex6);
@@ -445,6 +455,8 @@ std::complex<double> p6mFunction::bundle(double &x, double &y, unsigned int &i) 
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xhex6 = (x*(2.0*F2-F1)/q3+F1*y);
+    double Yhex6 = (x*(F2-2.0*F1)/q3+F2*y);
     std::complex<double> part1 = qCos(N*Xhex6 + M*Yhex6);
     std::complex<double> part2 = qCos((M)*Xhex6 - (N+M)*Yhex6);
     std::complex<double> part3 = qCos(-(N+M)*Xhex6 + (N)*Yhex6);
@@ -700,6 +712,8 @@ std::complex<double> rhombicFunction::bundle(double &x, double &y, unsigned int 
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xrhombic = (x*(-F1/2.0 - F2*TPhi) + F1*y );
+    double Yrhombic = (x*(F1*TPhi+F2*y) + F2*y );
     std::complex<double> part1 = ei(N*Xrhombic + M*Yrhombic);
     std::complex<double> part2 = ei(M*Xrhombic + N*Yrhombic);
     return (part1+part2)/2.0;
@@ -727,6 +741,8 @@ std::complex<double> rhombicpairedFunction::bundle(double &x, double &y, unsigne
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xrhombic2 = (x*(-2.0*F1-3.0*F2)/q5 + F1*y );
+    double Yrhombic2 = (x*(3.0*F1+2.0*F2)/q5 + F2*y );
     std::complex<double> part1 = ei(N*Xrhombic2 + M*Yrhombic2);
     std::complex<double> part2 = ei(-N*Xrhombic2 - M*Yrhombic2);
     
@@ -754,6 +770,8 @@ std::complex<double> cmmFunction::bundle(double &x, double &y, unsigned int &i) 
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xrhombic2 = (x*(-2.0*F1-3.0*F2)/q5 + F1*y );
+    double Yrhombic2 = (x*(3.0*F1+2.0*F2)/q5 + F2*y );
     std::complex<double> part1 = ei(N*Xrhombic2 + M*Yrhombic2)+ei(M*Xrhombic2 + N*Yrhombic2);
     std::complex<double> part2 = ei(-N*Xrhombic2 - M*Yrhombic2)+ei(-M*Xrhombic2 - N*Yrhombic2);
     
@@ -781,6 +799,8 @@ std::complex<double> squareFunction::bundle(double &x, double &y, unsigned int &
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xsquare = (F1*x+F2*y);
+    double Ysquare = (-F2*x+F1*y);
     std::complex<double> part1 = ei(N*Xsquare + M*Ysquare);
     std::complex<double> part2 = ei(-M*Xsquare + N*Ysquare);
     std::complex<double> part3 = ei(-N*Xsquare - M*Ysquare);
@@ -811,6 +831,8 @@ std::complex<double> p4mFunction::bundle(double &x, double &y, unsigned int &i) 
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xsquare = (F1*x+F2*y);
+    double Ysquare = (-F2*x+F1*y);
     std::complex<double> part1 = ei(N*Xsquare + M*Ysquare);
     std::complex<double> part2 = ei(-M*Xsquare + N*Ysquare);
     std::complex<double> part3 = ei(-N*Xsquare - M*Ysquare);
@@ -846,6 +868,8 @@ std::complex<double> p4gFunction::bundle(double &x, double &y, unsigned int &i) 
     N = freqs[i].N();
     M = freqs[i].M();
     double G=pow(-1.0,N+M);
+    double Xsquare = (F1*x+F2*y);
+    double Ysquare = (-F2*x+F1*y);
     std::complex<double> part1 = ei(N*Xsquare + M*Ysquare);
     std::complex<double> part2 = ei(-M*Xsquare + N*Ysquare);
     std::complex<double> part3 = ei(-N*Xsquare - M*Ysquare);
@@ -880,6 +904,8 @@ std::complex<double> squareMFunction::bundle(double &x, double &y, unsigned int 
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xsquare = (F1*x+F2*y);
+    double Ysquare = (-F2*x+F1*y);
     std::complex<double> part1 = ei(N*Xsquare + M*Ysquare);
     std::complex<double> part2 = ei(-M*Xsquare + N*Ysquare);
     std::complex<double> part3 = ei(-N*Xsquare - M*Ysquare);
@@ -911,6 +937,8 @@ std::complex<double> squareTFunction::bundle(double &x, double &y, unsigned int 
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
+    double Xsquare = (F1*x+F2*y);
+    double Ysquare = (-F2*x+F1*y);
     std::complex<double> part1 = ei(N*Xsquare + M*Ysquare);
     std::complex<double> part2 = ei(-M*Xsquare + N*Ysquare+3.0*pi/2.0);
     std::complex<double> part3 = ei(-N*Xsquare - M*Ysquare+pi);

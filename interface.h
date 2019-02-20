@@ -470,6 +470,7 @@ public:
     
     QLabel *colorwheelLabel;
     QLabel *functionLabel;
+    QLabel *fibLabel;
     QLabel *imagePathLabel;
     QLabel *numTermsLabel;
     QLabel *freqpairLabel;
@@ -482,6 +483,7 @@ public:
     QSpacerItem *gspacer5;
     QComboBox *colorwheelSel;
     QComboBox *functionSel;
+    QComboBox *fibSel;
     QPushButton *setLoadedImage;
     QRadioButton *fromImageButton;
     QRadioButton *fromColorWheelButton;
@@ -589,6 +591,7 @@ signals:
     
     //TODO for each change function, push current value onto the undostack...each action has its own command?
     void changeFunction(int index);
+    void changeFib(int index);
     void changeWorldWidth(double val);
     void changeWorldWidth();
     void changeWorldHeight(double val);

@@ -90,7 +90,7 @@ void RenderThread::run()
                 
                 //run the point through our mathematical function
                 //...then convert that complex output to a color according to our color wheel
-                ang=qAtan2(worldY,worldX)-2*pi*(F1/F2)*currFunction->getT();
+                ang=qAtan2(worldY,worldX)-2*pi*(currFunction->getF1()/ currFunction->getF2())*currFunction->getT();
                 fout = (*currFunction)(qLn(qSqrt(worldX*worldX+worldY*worldY)),ang);  // math function to get complex coordinate
                 QRgb color = (*currColorWheel)(fout);   // colorification from complex coordinate
 

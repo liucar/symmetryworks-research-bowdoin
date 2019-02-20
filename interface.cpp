@@ -482,9 +482,11 @@ void Interface::initPatternType()
 {
     
     functionSel = new QComboBox(patternTypeBox);
+    fibSel = new QComboBox(patternTypeBox);
     colorwheelSel = new QComboBox(patternTypeBox);
     
     functionSel->setFocusPolicy(Qt::StrongFocus);
+    fibSel->setFocusPolicy(Qt::StrongFocus);
     colorwheelSel->setFocusPolicy(Qt::StrongFocus);
     
     gspacer1 = new QSpacerItem(0,20);
@@ -539,6 +541,13 @@ void Interface::initPatternType()
     functionSel->addItem("pg");
     functionSel->addItem("cm");
     functionSel->addItem("Original");
+
+    // fib selector
+    fibSel->addItem("2,3");
+    fibSel->addItem("3,5");
+    fibSel->addItem("5,8");
+    fibSel->addItem("8,13");
+    fibSel->addItem("13,21");
     
     // color wheel selector
     colorwheelSel->addItem("IcosColor");
@@ -639,6 +648,7 @@ void Interface::initPatternType()
     
     functionLayout->addWidget(functionLabel);
     functionLayout->addWidget(functionSel);
+    functionLayout->addWidget(fibSel);
     functionLayout->addWidget(viewFunctionIconsButton);
     patternTypeBoxLayout->addLayout(functionLayout);
     patternTypeBoxLayout->addWidget(endPattern);
@@ -864,6 +874,7 @@ void Interface::connectAllSignals()
     connect(stopAnimationButton, SIGNAL(clicked()), this, SLOT(stopAnimationFunction()));
 
     connect(functionSel, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFunction(int)));
+    connect(fibSel, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFib(int)));
     connect(colorwheelSel, SIGNAL(currentIndexChanged(int)), currColorWheel, SLOT(setCurrent(int)));
     connect(colorwheelSel, SIGNAL(currentIndexChanged(int)), this, SLOT(colorWheelChanged(int)));
     connect(fromColorWheelButton, SIGNAL(clicked()), this, SLOT(selectColorWheel()));
@@ -1398,6 +1409,12 @@ void Interface::changeFunction(int index)
     resetFunction();
 }
 
+void Interface::changeFib(int index)
+{
+    currFunction->setFibonacci(index);
+    updatePreviewDisplay();
+
+}
 
 // SLOT function called when user attempts to save current settings into a wpr file
 void Interface::saveCurrWorkspace()

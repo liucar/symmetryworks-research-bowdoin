@@ -26,8 +26,8 @@ const int Fib = 0;
 const int MAX_RGB = 255;
 const int MIN_RGB = 0;
 const double TPhi=1.118033989;
-const double F1=5.0;
-const double F2=8.0;
+//const double F1=5.0;
+//const double F2=8.0;
 
 struct vect5
 {
@@ -147,7 +147,12 @@ inline QRgb RgbFromVec3(QVector3D v)
     return color.rgb();
 }
 
-
+//int generateFib(int n)
+//{
+//    if (n <= 1)
+//        return n;
+//    return generateFib(n-1) + generateFib(n-2);
+//}
 
 
 
