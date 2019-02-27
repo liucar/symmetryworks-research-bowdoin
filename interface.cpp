@@ -489,23 +489,19 @@ void Interface::initPatternType()
     fibSel->setFocusPolicy(Qt::StrongFocus);
     colorwheelSel->setFocusPolicy(Qt::StrongFocus);
     
-    gspacer1 = new QSpacerItem(0,20);
-    gspacer2 = new QSpacerItem(0,10);
-    gspacer3 = new QSpacerItem(0,10);
-    gspacer4 = new QSpacerItem(0,50);
-    gspacer5 = new QSpacerItem(0,10);
     
     patternTypeBoxLayout = new QVBoxLayout(patternTypeBox);
     functionLayout = new QHBoxLayout();
+    fibLayout = new QHBoxLayout();
     colorwheelLayout = new QHBoxLayout();
     fromImageLayout = new QHBoxLayout();
-    
     
     setLoadedImage = new QPushButton(tr("Set/Change Image..."), patternTypeBox);
     fromImageButton = new QRadioButton(tr("Image"), patternTypeBox);
     fromColorWheelButton = new QRadioButton(tr("Color Wheel"), patternTypeBox);
     // showImageDataGraphButton = new QPushButton(tr("Show Graph"), patternTypeBox);
     functionLabel = new QLabel(patternTypeBox);
+    fibLabel = new QLabel(patternTypeBox);
     colorwheelLabel = new QLabel(patternTypeBox);
     imagePathLabel = new QLabel(patternTypeBox);
     
@@ -560,6 +556,7 @@ void Interface::initPatternType()
     colorwheelSel->addItem("Sect6Col");
     colorwheelSel->addItem("WinCol");
     functionLabel->setText(tr("<b>Pattern<\b>"));
+    fibLabel->setText(tr("<b>Fibonacci</b>"));
     colorwheelLabel->setText(tr("<b>Color<\b>"));
     
     //initialize function previews window
@@ -648,9 +645,12 @@ void Interface::initPatternType()
     
     functionLayout->addWidget(functionLabel);
     functionLayout->addWidget(functionSel);
-    functionLayout->addWidget(fibSel);
     functionLayout->addWidget(viewFunctionIconsButton);
     patternTypeBoxLayout->addLayout(functionLayout);
+    patternTypeBoxLayout->addWidget(endPattern);
+    fibLayout->addWidget(fibLabel);
+    fibLayout->addWidget(fibSel);
+    patternTypeBoxLayout->addLayout(fibLayout);
     patternTypeBoxLayout->addWidget(endPattern);
     patternTypeBoxLayout->addWidget(colorwheelLabel);
     
@@ -2252,11 +2252,12 @@ void Interface::startAnimationExport()
     settings->OHeight = 800;
     aspectRatio = (double)settings->Width/settings->Height;
 
-    QString fileName = "D:/frame";
-    fileName += QString::number((int) (currFunction->getT()));
-    fileName += ".jpg";
-
-    if (fileName == "") return;
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+    dir.mkdir("frames");
+    QString filePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/frames/frame";
+    QString number = QString::number((int) (currFunction->getT()));
+    QString extension = ".jpg";
+    QString fileName = filePath + number + extension;
 
     QFile inFile(fileName);
     if (!inFile.open(QIODevice::WriteOnly))

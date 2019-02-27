@@ -465,6 +465,7 @@ public:
     QVBoxLayout *patternTypeBoxOverallLayout;
     QVBoxLayout *patternTypeBoxLayout;
     QHBoxLayout *functionLayout;
+    QHBoxLayout *fibLayout;
     QHBoxLayout *colorwheelLayout;
     QHBoxLayout *fromImageLayout;
     
