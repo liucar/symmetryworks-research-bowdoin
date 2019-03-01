@@ -85,7 +85,7 @@ protected:
     unsigned int terms;
     coeffpair scale;
     double T, waveVelocity;
-    double F1=2, F2=3;
+    double F1=8, F2=13;
     
     // PRIVATE MEMBER FUNCTIONS
     void initWithVectors(QVector<coeffpair> &in_coeffs, QVector<freqpair> &in_freqs);

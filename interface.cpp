@@ -544,6 +544,8 @@ void Interface::initPatternType()
     fibSel->addItem("5,8");
     fibSel->addItem("8,13");
     fibSel->addItem("13,21");
+        fibSel->addItem("13,21");
+            fibSel->addItem("13,21");
     
     // color wheel selector
     colorwheelSel->addItem("IcosColor");
@@ -1815,7 +1817,7 @@ void Interface::playAnimationFunction()
 void Interface::continueAnimation()
 {
     if (!isAnimating) {
-        stopAnimationButton->setEnabled(false);
+        stopAnimationButton->setEnabled(true);
         return;
     }
 
