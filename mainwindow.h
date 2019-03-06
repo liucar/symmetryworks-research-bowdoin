@@ -54,6 +54,7 @@ private:
     QAction *snapshotAct;
     QAction *resetImageAct;
     QAction *aboutAct;
+    QAction *setFibonacciNums;
     QAction *setOverflowColorAct;
     QAction *showImageDataGraphAct;
     QAction *undoAct;
@@ -66,6 +67,7 @@ private:
     
     private slots:
     void updateImageActionStatus(bool status) {
+        setFibonacciNums->setEnabled(status);
         setOverflowColorAct->setEnabled(status);
         showImageDataGraphAct->setEnabled(status);
     }

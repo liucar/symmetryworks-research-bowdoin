@@ -68,6 +68,13 @@ public:                   //derived classes
                 F1=13;
                 F2=21;
                 break;
+            case 5:
+                F1=21;
+                F2=34;
+                break;
+            case 6:
+                F1=34;
+                F2=35;
         }
     };
     void setScaleR(double &val);

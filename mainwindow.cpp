@@ -113,6 +113,10 @@ void MainWindow::createActions()
     resetImageAct->setStatusTip(tr("Reset the current image to its default settings"));
     connect(resetImageAct, SIGNAL(triggered()), currInterface, SLOT(resetFunction()));
     
+    setFibonacciNums = new QAction(tr("Set Fibonacci numbers..."), this);
+    setFibonacciNums->setStatusTip(tr("Set Fibonacci numbers to change the spiral"));
+    connect(setFibonacciNums, SIGNAL(triggered()), currInterface, SLOT(showFibonacciPopUp()));
+    setFibonacciNums->setEnabled(true);
     
     setOverflowColorAct = new QAction(tr("Set Overflow Color..."), this);
     setOverflowColorAct->setStatusTip(tr("Set default color for overflow pixel on image"));
@@ -148,6 +152,7 @@ void MainWindow::createMenus()
    
     advancedMenu = menuBar()->addMenu(tr("&Advanced"));
     advancedMenu->addSeparator();
+    advancedMenu->addAction(setFibonacciNums);
     advancedMenu->addAction(setOverflowColorAct);
     advancedMenu->addAction(showImageDataGraphAct);
     

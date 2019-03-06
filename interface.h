@@ -489,6 +489,13 @@ public:
     QRadioButton *fromImageButton;
     QRadioButton *fromColorWheelButton;
     QColorDialog *setOverflowColorPopUp;
+    QWidget *fibonacciPopUp;
+    QTableWidget *fibTable;
+    QHeaderView *fibHeaderHorizontal;
+    QHeaderView *fibHeaderVertical;
+    QStringList *fibHorizontalHeaders;
+    QStringList *fibVerticalHeaders;
+    QPushButton *fibButton;
     
     // IMAGE DATA POINTS
     QPushButton *updateImageDataGraphButton;
@@ -647,6 +654,8 @@ signals:
     void resetMainWindowButton(const bool &status);
     
     void showFunctionIcons() { functionIconsWindow->hide(), functionIconsWindow->show(); }
+
+    void showFibonacciPopUp() { fibonacciPopUp->show(); }
     void showOverflowColorPopUp() { setOverflowColorPopUp->show(); }
     
     void addNewImageDataPoint(const ComplexValue &data) { *imageDataSeries << QPointF(data.real(), data.imag()); }
@@ -680,6 +689,7 @@ private:
     void initInterfaceLayout();
     void initPreviewDisplay();
     void initFunctionConstants();
+    void initFibonacciPopUp();
     void initPatternType();
     void initGlobalScaling();
     void initImageProps();
