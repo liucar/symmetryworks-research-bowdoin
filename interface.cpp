@@ -221,17 +221,17 @@ void Interface::initFibonacciPopUp()
     fibonacciPopUp->setWindowTitle(tr("Set Fibonacci Numbers"));
     fibonacciPopUp->setMinimumWidth(340);
 
-    fibonacciPopUp->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    fibonacciPopUp->hide();
+//    fibonacciPopUp->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+//    fibonacciPopUp->hide();
 
-    fibTable = new QTableWidget(termViewWidget);
-    fibTable->setColumnCount(6);
+//    fibTable = new QTableWidget(termViewWidget);
+//    fibTable->setColumnCount(6);
 
-//    fibHorizontalHeaders << tr("Term") << tr("m") << tr("n") << tr("a") << tr("r") << tr("");
-    fibTable->setHorizontalHeaderLabels(termViewHorizontalHeaders);
-    fibTable->verticalHeader()->hide();
+////    fibHorizontalHeaders << tr("Term") << tr("m") << tr("n") << tr("a") << tr("r") << tr("");
+//    fibTable->setHorizontalHeaderLabels(termViewHorizontalHeaders);
+//    fibTable->verticalHeader()->hide();
 
-    fibButton = new QPushButton(tr("Set Changes"));
+//    fibButton = new QPushButton(tr("Set Changes"));
 
 }
 
