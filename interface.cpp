@@ -1668,17 +1668,21 @@ QString Interface::loadSettings(const QString &fileName) {
         scaleTEdit->setText(QString::number(tempdouble));
         scaleTEdit->blockSignals(false);
 
-        in.readLineInto(&line);
-        tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-        waveVelocityEdit->blockSignals(true);
-        currFunction->setT(tempdouble);
-        waveVelocityEdit->setText(QString::number(tempdouble));
-        waveVelocityEdit->blockSignals(false);
+//        in.readLineInto(&line);
+//        tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+//        waveVelocityEdit->blockSignals(true);
+//        currFunction->setT(tempdouble);
+//        waveVelocityEdit->setText(QString::number(tempdouble));
+//        waveVelocityEdit->blockSignals(false);
 
         in.readLineInto(&line);
         count = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
-
+        addTermButton->blockSignals(true);
         currFunction->setNumTerms(count);
+        int newNumTerms = count;
+        currFunction->setNumTerms(newNumTerms);
+        numTermsEdit->setValue(newNumTerms);
+
         unsigned int unsignedCount = count;
         //currFunction->refresh();
 
