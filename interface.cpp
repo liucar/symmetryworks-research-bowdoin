@@ -305,7 +305,7 @@ void Interface::initFunctionConstants()
     
     coeffPlaneEdit = new QPushButton(tr("Set on Plane"), functionConstantsBox);
     
-    numTermsLabel = new QLabel(tr("<b>Total Number of Terms: <\b>"), functionConstantsBox);
+    numTermsLabel = new QLabel(tr("<b>Total Terms: <\b>"), functionConstantsBox);
     numTermsEdit = new QSpinBox(functionConstantsBox);
     numTermsEdit->setValue(1);
     numTermsEdit->setRange(1, MAX_NUM_TERMS);
@@ -374,6 +374,7 @@ void Interface::initFunctionConstants()
                 functionTermsGrid->addWidget(currTermLabel, r, 2, 1, 1, Qt::AlignRight);
                 functionTermsGrid->addWidget(currTermEdit, r, 3, 1, 1, Qt::AlignCenter);
                 functionTermsGrid->addWidget(termViewButton, 0, 4, 1, 1, Qt::AlignRight);
+                functionTermsGrid->addWidget(coeffPlaneEdit, r, 5, 1, 1, Qt::AlignCenter);
                 // functionTermsGrid->setVerticalSpacing(20);
                 break;
             case 1:
@@ -394,7 +395,6 @@ void Interface::initFunctionConstants()
                 functionTermsGrid->addWidget(aLabel, r, 7, 1, 1, Qt::AlignCenter);
                 functionTermsGrid->addWidget(aEdit, r, 8, 1, 1, Qt::AlignCenter);
                 functionTermsGrid->addWidget(aValueLabel, r, 9, 1, 1, Qt::AlignLeft);
-                functionTermsGrid->addWidget(coeffPlaneEdit, r, 10, 1, 1, Qt::AlignCenter);
                 break;
             case 3:
 
@@ -1505,6 +1505,7 @@ QString Interface::saveSettings(const QString &fileName, const int &actionFlag) 
     out << "Output Height: " << QString::number(settings->OHeight) << endl;
    	out << "Function Type: " << "Wallpapers" << endl;
    	out << "Function: " << functionSel->currentText() << endl;
+    out << "Fibonacci: " << fibSel->currentIndex() << endl;
     
    	if (fromColorWheelButton->isChecked()) {
         out << "Color Type: Colorwheel" << endl;
@@ -1590,7 +1591,7 @@ QString Interface::loadSettings(const QString &fileName) {
 
         QString imageLoadPath;
         QString loadImageName;
-        int tempint, newFunctionIndex, newColorIndex, count;
+        int tempint, newFunctionIndex, newFibIndex, newColorIndex, count;
         double tempdouble;
         QColor overflowColor;
 
@@ -1622,6 +1623,9 @@ QString Interface::loadSettings(const QString &fileName) {
         // }
 
         in.readLineInto(&line);
+        newFibIndex = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+
+        in.readLineInto(&line);
         colorType = (line.right(line.length() - line.lastIndexOf(" ") - 1));
 
         // in >> skipString >> colorType;
@@ -1630,7 +1634,7 @@ QString Interface::loadSettings(const QString &fileName) {
             in.readLineInto(&line);
             imageLoadPath = (line.right(line.length() - line.lastIndexOf(" ") - 1));
             in.readLineInto(&line);
-            loadImageName = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+            loadImageName = (line.right(line.length() - line.lastIndexOf(":") - 2));
             in.readLineInto(&line);
             overflowColor = QColor(line.right(line.length() - line.lastIndexOf(" ") - 1));
         }
@@ -1727,6 +1731,8 @@ QString Interface::loadSettings(const QString &fileName) {
             functionSel->setCurrentIndex(newFunctionIndex);
              //qDebug() << scaleREdit->text();
         }
+
+        fibSel->setCurrentIndex(newFibIndex);
     //
        // qDebug() << currFunction->getScaleR();
         refreshMainWindowTerms();
