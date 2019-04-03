@@ -1673,11 +1673,19 @@ QString Interface::loadSettings(const QString &fileName) {
             in.readLineInto(&line);
         }
 
+        if (line.contains("Wave Velocity")) {
+            tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+            waveVelocityEdit->blockSignals(true);
+            currFunction->setWaveVelocity(tempdouble);
+            waveVelocityEdit->setText(QString::number(tempdouble));
+            waveVelocityEdit->blockSignals(false);
+            in.readLineInto(&line);
+         }
 
         count = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
-        addTermButton->blockSignals(true);
-        currFunction->setNumTerms(count);
-        numTermsEdit->setValue(count);
+        if (numTerms != count) {
+            changeNumTerms(count);
+        }
 
         unsigned int unsignedCount = count;
         //currFunction->refresh();
