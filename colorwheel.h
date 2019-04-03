@@ -32,7 +32,7 @@ public:
     void loadImage(QString filename);
     
     ColorWheel* clone();
-    
+    QImage getImage() { return image; };
     QColor getOverflowColor() { return overflowColor; }
     
 private:

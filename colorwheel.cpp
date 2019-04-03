@@ -31,7 +31,7 @@ ColorWheel* ColorWheel::clone()
     c->changeOverflowColor(this->getOverflowColor());
     
     if (!(this->image.isNull())) {
-        c->image = this->image.copy();
+        c->image = getImage();
     } else {
         
     }

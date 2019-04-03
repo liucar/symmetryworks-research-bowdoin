@@ -1591,7 +1591,7 @@ QString Interface::loadSettings(const QString &fileName) {
 
         QString imageLoadPath;
         QString loadImageName;
-        int tempint, newFunctionIndex, newFibIndex, newColorIndex, count;
+        int tempint, newFunctionIndex, newFibIndex=-1, newColorIndex, count;
         double tempdouble;
         QColor overflowColor;
 
@@ -1623,9 +1623,11 @@ QString Interface::loadSettings(const QString &fileName) {
         // }
 
         in.readLineInto(&line);
-        newFibIndex = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+        if (line.contains("Fibonacci")) {
+            newFibIndex = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+            in.readLineInto(&line);
+        }
 
-        in.readLineInto(&line);
         colorType = (line.right(line.length() - line.lastIndexOf(" ") - 1));
 
         // in >> skipString >> colorType;
@@ -1662,26 +1664,20 @@ QString Interface::loadSettings(const QString &fileName) {
         scaleAEdit->blockSignals(false);
 
         in.readLineInto(&line);
-        tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-        scaleTEdit->blockSignals(true);
-        currFunction->setT(tempdouble);
-        scaleTEdit->setText(QString::number(tempdouble));
-        scaleTEdit->blockSignals(false);
+        if (line.contains("Scaling Time")) {
+            tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+            scaleTEdit->blockSignals(true);
+            currFunction->setT(tempdouble);
+            scaleTEdit->setText(QString::number(tempdouble));
+            scaleTEdit->blockSignals(false);
+            in.readLineInto(&line);
+        }
 
-//        in.readLineInto(&line);
-//        tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-//        waveVelocityEdit->blockSignals(true);
-//        currFunction->setT(tempdouble);
-//        waveVelocityEdit->setText(QString::number(tempdouble));
-//        waveVelocityEdit->blockSignals(false);
 
-        in.readLineInto(&line);
         count = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
         addTermButton->blockSignals(true);
         currFunction->setNumTerms(count);
-        int newNumTerms = count;
-        currFunction->setNumTerms(newNumTerms);
-        numTermsEdit->setValue(newNumTerms);
+        numTermsEdit->setValue(count);
 
         unsigned int unsignedCount = count;
         //currFunction->refresh();
@@ -1736,7 +1732,10 @@ QString Interface::loadSettings(const QString &fileName) {
              //qDebug() << scaleREdit->text();
         }
 
-        fibSel->setCurrentIndex(newFibIndex);
+        if (newFibIndex >= 0) {
+            fibSel->setCurrentIndex(newFibIndex);
+        }
+
     //
        // qDebug() << currFunction->getScaleR();
         refreshMainWindowTerms();
