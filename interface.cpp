@@ -1862,7 +1862,7 @@ void Interface::continueAnimation()
     stopAnimationButton->setEnabled(true);
 
     currFunction->setT(currFunction->getT() + 1);
-    if (currFunction->getT() >= 55)
+    if (currFunction->getT() >= 200)
         isAnimating = false;
 
     if (isAnimating) {
