@@ -457,7 +457,7 @@ void Interface::initGlobalScaling()
     scaleREditSlider->setSingleStep(1);
     scaleAEditSlider->setRange(-314,314);
     scaleAEditSlider->setSingleStep(1);
-    scaleTEditSlider->setRange(0, 30000);
+    scaleTEditSlider->setRange(0, 20000);
     scaleTEditSlider->setSingleStep(1);
     waveVelocityEditSlider->setRange(0, 200);
     waveVelocityEditSlider->setSingleStep(1);
@@ -1862,7 +1862,7 @@ void Interface::continueAnimation()
     stopAnimationButton->setEnabled(true);
 
     currFunction->setT(currFunction->getT() + 1);
-    if (currFunction->getT() >= 300)
+    if (currFunction->getT() >= 200)
         isAnimating = false;
 
     if (isAnimating) {
