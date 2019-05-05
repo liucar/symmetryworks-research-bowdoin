@@ -99,7 +99,6 @@ Interface::Interface(QWidget *parent) : QWidget(parent)
     refreshTableTerms();
     updatePreviewDisplay();
     
-    initFibonacciPopUp();
 }
 
 // INIT INTERFACE LAYOUT
@@ -215,25 +214,6 @@ void Interface::initPreviewDisplay()
     dispLayout->addStretch();
 }
 
-void Interface::initFibonacciPopUp()
-{
-    fibonacciPopUp = new QWidget(this, Qt::Window);
-    fibonacciPopUp->setWindowTitle(tr("Set Fibonacci Numbers"));
-    fibonacciPopUp->setMinimumWidth(340);
-
-//    fibonacciPopUp->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-//    fibonacciPopUp->hide();
-
-//    fibTable = new QTableWidget(termViewWidget);
-//    fibTable->setColumnCount(6);
-
-////    fibHorizontalHeaders << tr("Term") << tr("m") << tr("n") << tr("a") << tr("r") << tr("");
-//    fibTable->setHorizontalHeaderLabels(termViewHorizontalHeaders);
-//    fibTable->verticalHeader()->hide();
-
-//    fibButton = new QPushButton(tr("Set Changes"));
-
-}
 
 // INIT FUNCTION CONSTANTS EDIT BOX
 void Interface::initFunctionConstants()
