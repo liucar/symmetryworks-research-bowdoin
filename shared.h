@@ -17,8 +17,8 @@ const double DEFAULT_WORLD_WIDTH = 4.0;
 const double DEFAULT_WORLD_HEIGHT = 4.0;
 const double DEFAULT_XCORNER = -2.0;
 const double DEFAULT_YCORNER = -2.0;
-const int DEFAULT_OUTPUT_WIDTH = 6000; //6000 width 4800 height standard for art prints
-const int DEFAULT_OUTPUT_HEIGHT = 4800;
+const int DEFAULT_OUTPUT_WIDTH = 1000; //6000 width 4800 height standard for art prints
+const int DEFAULT_OUTPUT_HEIGHT = 1000;
 const double PREVIEW_SCALING = 0.4;
 const int PARAMETER_SEPARATOR_LENGTH = 10;
 
