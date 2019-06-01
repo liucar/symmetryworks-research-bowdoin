@@ -8,7 +8,7 @@ QT       += core gui
 QT       += widgets printsupport
 QT       += charts
 
-TARGET = wallgen
+TARGET = fibonacci-spiral
 TEMPLATE = app
 
 #CONFIG -= app_bundle
