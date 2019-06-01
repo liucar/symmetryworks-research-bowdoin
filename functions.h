@@ -30,7 +30,6 @@ public:                   //derived classes
     double getR(unsigned int &i) const;
     double getA(unsigned int &i) const;
     double getT() { return T; }
-    double getWaveVelocity() { return waveVelocity; }
     double getF1() { return F1; }
     double getF2() { return F2; }
     double getScaleR() const { return scale.R(); }
@@ -44,7 +43,6 @@ public:                   //derived classes
     void setR(unsigned int &i, double &val);
     void setA(unsigned int &i, double &val);
     void setT(double Tval) { T = Tval; }
-    void setWaveVelocity(double val) { waveVelocity = val; }
     void setFibonacci(int index) {
         switch(index)
         {
@@ -91,7 +89,7 @@ protected:
     QVector<freqpair> freqs;
     unsigned int terms;
     coeffpair scale;
-    double T, waveVelocity;
+    double T;
     double F1=8, F2=13;
     
     // PRIVATE MEMBER FUNCTIONS

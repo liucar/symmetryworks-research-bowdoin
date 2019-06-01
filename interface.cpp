@@ -84,8 +84,7 @@ Interface::Interface(QWidget *parent) : QWidget(parent)
     setTabOrder(colorwheelSel, scaleREdit);
     setTabOrder(scaleREdit, scaleAEdit);
     setTabOrder(scaleAEdit, scaleTEdit);
-    setTabOrder(scaleTEdit, waveVelocityEdit);
-    setTabOrder(waveVelocityEdit, XShiftEdit);
+    setTabOrder(scaleTEdit, XShiftEdit);
     setTabOrder(XShiftEdit, YShiftEdit);
     setTabOrder(YShiftEdit, worldWidthEdit);
     setTabOrder(worldWidthEdit, worldHeightEdit);
@@ -381,6 +380,7 @@ void Interface::initFunctionConstants()
                 break;
             case 4:
                 functionTermsGrid->addWidget(line2, r, 0, 1, 10);
+                break;
         }
     }
     
@@ -401,50 +401,40 @@ void Interface::initGlobalScaling()
     scaleRLayout = new QHBoxLayout();
     scaleALayout = new QHBoxLayout();
     scaleTLayout = new QHBoxLayout();
-    waveVelocityLayout = new QHBoxLayout();
+
     
     scaleALabel = new QLabel(tr("Scaling Angle"), globalScalingBox);
     scaleRLabel = new QLabel(tr("Scaling Radius"), globalScalingBox);
-    scaleTLabel = new QLabel(tr("Scaling Time"), globalScalingBox);
-    waveVelocityLabel = new QLabel(tr("Scaling Wave Velocity"), globalScalingBox);
+    scaleTLabel = new QLabel(tr("Frame Number"), globalScalingBox);
     scaleAEditSlider = new QDoubleSlider(globalScalingBox);
     scaleREditSlider = new QDoubleSlider(globalScalingBox);
     scaleTEditSlider = new QDoubleSlider(globalScalingBox);
-    waveVelocityEditSlider = new QDoubleSlider(globalScalingBox);
     scaleAEdit = new CustomLineEdit(patternTypeBox);
     scaleREdit = new CustomLineEdit(patternTypeBox);
     scaleTEdit = new CustomLineEdit(patternTypeBox);
-    waveVelocityEdit = new CustomLineEdit(patternTypeBox);
     
     
     scaleAEdit->setValidator(doubleValidate);
     scaleREdit->setValidator(doubleValidate);
     scaleTEdit->setValidator(doubleValidate);
-    waveVelocityEdit->setValidator(doubleValidate);
     scaleAEdit->setFixedWidth(40);
     scaleREdit->setFixedWidth(40);
     scaleTEdit->setFixedWidth(40);
-    waveVelocityEdit->setFixedWidth(40);
     scaleAEdit->setAlignment(Qt::AlignCenter);
     scaleREdit->setAlignment(Qt::AlignCenter);
     scaleTEdit->setAlignment(Qt::AlignCenter);
-    waveVelocityEdit->setAlignment(Qt::AlignCenter);
     scaleAEditSlider->setOrientation(Qt::Horizontal);
     scaleREditSlider->setOrientation(Qt::Horizontal);
     scaleTEditSlider->setOrientation(Qt::Horizontal);
-    waveVelocityEditSlider->setOrientation(Qt::Horizontal);
     scaleREditSlider->setRange(0, 500);
     scaleREditSlider->setSingleStep(1);
     scaleAEditSlider->setRange(-314,314);
     scaleAEditSlider->setSingleStep(1);
     scaleTEditSlider->setRange(0, 20000);
     scaleTEditSlider->setSingleStep(1);
-    waveVelocityEditSlider->setRange(0, 200);
-    waveVelocityEditSlider->setSingleStep(1);
     scaleREditSlider->setFixedWidth(100);
     scaleAEditSlider->setFixedWidth(100);
     scaleTEditSlider->setFixedWidth(100);
-    waveVelocityEditSlider->setFixedWidth(100);
     scalePlaneEdit = new QPushButton(tr("Set on Plane"), globalScalingBox);
     
     scaleRLayout->addWidget(scaleRLabel);
@@ -456,24 +446,18 @@ void Interface::initGlobalScaling()
     scaleTLayout->addWidget(scaleTLabel);
     scaleTLayout->addWidget(scaleTEditSlider);
     scaleTLayout->addWidget(scaleTEdit);
-    waveVelocityLayout->addWidget(waveVelocityLabel);
-    waveVelocityLayout->addWidget(waveVelocityEditSlider);
-    waveVelocityLayout->addWidget(waveVelocityEdit);
     
     globalScalingBoxLayout->addLayout(scaleRLayout);
     globalScalingBoxLayout->addLayout(scaleALayout);
     globalScalingBoxLayout->addLayout(scaleTLayout);
-    globalScalingBoxLayout->addLayout(waveVelocityLayout);
     globalScalingBoxLayout->addWidget(scalePlaneEdit);
     
     scaleREdit->setText(QString::number(currFunction->getScaleR()));
     scaleAEdit->setText(QString::number(currFunction->getScaleA()));
     scaleTEdit->setText(QString::number(currFunction->getT()));
-    waveVelocityEdit->setText(QString::number(currFunction->getWaveVelocity()));
     scaleREditSlider->setValue(currFunction->getScaleR() * 100.0);
     scaleAEditSlider->setValue(currFunction->getScaleA() * 100.0);
     scaleTEditSlider->setValue(currFunction->getT() * 100.0);
-    waveVelocityEditSlider->setValue(currFunction->getWaveVelocity() * 100.0);
     
 }
 
@@ -844,7 +828,6 @@ void Interface::initToolTips()
     scaleRLabel->setToolTip("Changes which points on the color wheel\n will be called up by the wallpaper function.");
     scaleALabel->setToolTip("Changes which points on the color wheel\n will be called up by the wallpaper function.");
     scaleTLabel->setToolTip("Changes how far forward in time the\n wallpaper function is (starts at T = 0).");
-    waveVelocityLabel->setToolTip("Changes the speed at which the\n wallpaper function moves forward in time\n (waveVelocity = 1 means 1x speed).");
 
     QString freqToolTip = "Larger values of <b>n</b> and <b>m</b> will make your wallpaper pattern more 'wiggly.' \nThese represent directional frequencies of waves.";
     freqpairLabel->setToolTip(freqToolTip);
@@ -890,15 +873,12 @@ void Interface::connectAllSignals()
     connect(scaleREdit, SIGNAL(returnPressed()), this, SLOT(changeScaleR()));
     connect(scaleAEdit, SIGNAL(returnPressed()), this, SLOT(changeScaleA()));
     connect(scaleTEdit, SIGNAL(returnPressed()), this, SLOT(changeScaleT()));
-    connect(waveVelocityEdit, SIGNAL(returnPressed()), this, SLOT(changeWaveVelocity()));
     connect(scaleREditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeScaleR(double)));
     connect(scaleREditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
     connect(scaleAEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeScaleA(double)));
     connect(scaleAEditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
     connect(scaleTEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeScaleT(double)));
     connect(scaleTEditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
-    connect(waveVelocityEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeWaveVelocity(double)));
-    connect(waveVelocityEditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
 
     connect(numTermsEdit, SIGNAL(valueChanged(int)), this, SLOT(changeNumTerms(int)));
     connect(currTermEdit, SIGNAL(valueChanged(int)), this, SLOT(updateCurrTerm(int)));
@@ -1042,8 +1022,6 @@ void Interface::refreshMainWindowTerms()
     scaleREditSlider->blockSignals(true);
     scaleTEdit->blockSignals(true);
     scaleTEditSlider->blockSignals(true);
-    waveVelocityEdit->blockSignals(true);
-    waveVelocityEditSlider->blockSignals(true);
     
     oldM = currFunction->getM(termIndex);
     oldN = currFunction->getN(termIndex);
@@ -1057,8 +1035,6 @@ void Interface::refreshMainWindowTerms()
     scaleREditSlider->setValue(currFunction->getScaleR() * 100);
     scaleTEdit->setText(QString::number(currFunction->getT()));
     scaleTEditSlider->setValue(currFunction->getT() * 100);
-    waveVelocityEdit->setText(QString::number(currFunction->getWaveVelocity()));
-    waveVelocityEditSlider->setValue(currFunction->getWaveVelocity() * 100);
     
     mEdit->blockSignals(false);
     nEdit->blockSignals(false);
@@ -1070,8 +1046,6 @@ void Interface::refreshMainWindowTerms()
     scaleREditSlider->blockSignals(false);
     scaleTEdit->blockSignals(false);
     scaleTEditSlider->blockSignals(false);
-    waveVelocityEdit->blockSignals(false);
-    waveVelocityEditSlider->blockSignals(false);
     
     aValueLabel->setText(QString::number(currFunction->getA(termIndex)));
     rValueLabel->setText(QString::number(currFunction->getR(termIndex)));
@@ -1218,7 +1192,6 @@ void Interface::resetFunction()
     changeScaleR(currFunction->getScaleR());
     changeScaleA(currFunction->getScaleA());
     changeScaleT(currFunction->getT());
-    changeWaveVelocity(currFunction->getWaveVelocity());
     
     // changeWorldHeight(DEFAULT_WORLD_HEIGHT);
     // changeWorldWidth(DEFAULT_WORLD_WIDTH);
@@ -1654,11 +1627,12 @@ QString Interface::loadSettings(const QString &fileName) {
         }
 
         if (line.contains("Wave Velocity")) {
-            tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-            waveVelocityEdit->blockSignals(true);
-            currFunction->setWaveVelocity(tempdouble);
-            waveVelocityEdit->setText(QString::number(tempdouble));
-            waveVelocityEdit->blockSignals(false);
+
+            in.readLineInto(&line);
+        }
+
+        if (line.contains("Morph")) {
+
             in.readLineInto(&line);
          }
 
@@ -2155,29 +2129,9 @@ void Interface::changeScaleT()
     updatePreviewDisplay();
 }
 
-//changing slider values
-void Interface::changeWaveVelocity(double val)
-{
-    currFunction->setWaveVelocity(val);
-    waveVelocityEdit->setText(QString::number(val));
-    waveVelocityEdit->setModified(false);
-    updatePreviewDisplay();
-}
 
-//changing edit box values
-void Interface::changeWaveVelocity()
-{
 
-    double val = waveVelocityEdit->text().toDouble();
-    currFunction->setWaveVelocity(val);
 
-    createUndoAction(waveVelocityEdit, waveVelocityEditSlider->value(), val);
-    waveVelocityEditSlider->blockSignals(true);
-    waveVelocityEditSlider->setValue(val * 100.0);
-    waveVelocityEditSlider->blockSignals(false);
-    waveVelocityEdit->setModified(false);
-    updatePreviewDisplay();
-}
 
 
 // SLOT FUNCTIONS TO CHANGE FREQ AND COEFF PAIRS

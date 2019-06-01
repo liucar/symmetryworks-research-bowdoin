@@ -127,7 +127,7 @@ void AbstractFunction::refresh()
     scale.setR(1.0);
     scale.setA(0.0);
     setT(0);
-    setWaveVelocity(0.05);
+
 }
 
 void AbstractFunction::initWithVectors(QVector<coeffpair> &in_coeffs, QVector<freqpair> &in_freqs)
@@ -144,7 +144,7 @@ void AbstractFunction::initWithVectors(QVector<coeffpair> &in_coeffs, QVector<fr
     scale.setR(1.0);
     scale.setA(0.0);
     setT(0);
-    setWaveVelocity(0.05);
+
 }
 
 
@@ -157,7 +157,7 @@ std::complex<double> generalFunction::bundle(double &x, double &y, unsigned int 
     M = freqs[i].M();
     std::complex<double> part1 = ei(N*Xgen + M*Ygen);
     
-    return part1 * ei(qSqrt(SQ(N) + SQ(M)) * T * waveVelocity);
+    return part1;
 }
 
 std::complex<double> generalFunction::operator ()(double i, double j)
@@ -183,10 +183,10 @@ std::complex<double> locSymFunction::bundle(double &x, double &y, unsigned int &
     N = freqs[i].N();
     M = freqs[i].M();
     if(N==0 and M==0)
-        part1 = qCos(Xloc) * qCos(Yloc) * qCos(-q2 * T * waveVelocity);
+        part1 = qCos(Xloc) * qCos(Yloc) * qCos(-q2 * T );
     else
-        part1 = (ei((2*N+M)*Xloc + (-2*M)*Yloc)*ei(qSqrt(SQ(2*N+M) + SQ(2*M)) * T * waveVelocity) +
-                 ei((2*M+N)*Xloc + (-2*N)*Yloc)*ei(qSqrt(SQ(2*M+N) + SQ(2*N)) * T * waveVelocity) ) / 2.0;
+        part1 = (ei((2*N+M)*Xloc + (-2*M)*Yloc)*ei(qSqrt(SQ(2*N+M) + SQ(2*M)) * T) +
+                 ei((2*M+N)*Xloc + (-2*N)*Yloc)*ei(qSqrt(SQ(2*M+N) + SQ(2*N)) * T ) ) / 2.0;
     
     return part1;
 }
@@ -214,12 +214,12 @@ std::complex<double> locSym2Function::bundle(double &x, double &y, unsigned int 
     N = freqs[i].N();
     M = freqs[i].M();
     if(N==0 and M==0)
-        part1=qCos(Xloc)*qCos(Yloc)*qCos(-q2 * T * waveVelocity);
+        part1=qCos(Xloc)*qCos(Yloc)*qCos(-q2 * T);
     else
-        part1 = (ei((2*N+M)*Xloc + (-2*M)*Yloc)*ei(qSqrt(SQ(2*N+M) + SQ(2*M)) * T * waveVelocity) +
-                 ei((2*M+N)*Xloc + (-2*N)*Yloc)*ei(qSqrt(SQ(2*M+N) + SQ(2*N)) * T * waveVelocity) +
-                 ei((-2*N-M)*Xloc + (2*M)*Yloc)*ei(qSqrt(SQ(2*N+M) + SQ(2*M)) * T * waveVelocity) +
-                 ei((-2*M-N)*Xloc + (2*N)*Yloc)*ei(qSqrt(SQ(2*M+N) + SQ(2*N)) * T * waveVelocity) ) / 4.0;
+        part1 = (ei((2*N+M)*Xloc + (-2*M)*Yloc)*ei(qSqrt(SQ(2*N+M) + SQ(2*M)) * T ) +
+                 ei((2*M+N)*Xloc + (-2*N)*Yloc)*ei(qSqrt(SQ(2*M+N) + SQ(2*N)) * T ) +
+                 ei((-2*N-M)*Xloc + (2*M)*Yloc)*ei(qSqrt(SQ(2*N+M) + SQ(2*M)) * T ) +
+                 ei((-2*M-N)*Xloc + (2*N)*Yloc)*ei(qSqrt(SQ(2*M+N) + SQ(2*N)) * T ) ) / 4.0;
     
     return part1;
 }
@@ -247,7 +247,7 @@ std::complex<double> locSymCTFunction::bundle(double &x, double &y, unsigned int
     N = freqs[i].N();
     M = freqs[i].M();
     
-    part1 = (ei((2*N+M+1)*Xloc + (-2*M+1)*Yloc)*ei(qSqrt(SQ(2*N+M+1) + SQ(-2*M+1)) * T * waveVelocity));
+    part1 = (ei((2*N+M+1)*Xloc + (-2*M+1)*Yloc)*ei(qSqrt(SQ(2*N+M+1) + SQ(-2*M+1)) * T));
     
     return part1;
 }
@@ -272,8 +272,8 @@ std::complex<double> generalpairedFunction::bundle(double &x, double &y, unsigne
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
-    std::complex<double> part1 = ei(N*Xgen2 + M*Ygen2)*ei(qSqrt(SQ(N) + SQ(M)) * T * waveVelocity);
-    std::complex<double> part2 = ei(-N*Xgen2 - M*Ygen2)*ei(qSqrt(SQ(N) + SQ(M)) * T * waveVelocity);
+    std::complex<double> part1 = ei(N*Xgen2 + M*Ygen2);
+    std::complex<double> part2 = ei(-N*Xgen2 - M*Ygen2);
     
     return (part1 + part2) / 2.0;
     
@@ -514,7 +514,7 @@ std::complex<double> pmFunction::bundle(double &x, double &y, unsigned int &i) c
     int N,M;
     N = freqs[i].N();
     M = freqs[i].M();
-    std::complex<double> part1 = (ei(N*Xrect + M*Yrect)+ei(-N*Xrect + M*Yrect))*ei(qSqrt(SQ(N) + SQ(M))*T*waveVelocity)/2.0;
+    std::complex<double> part1 = (ei(N*Xrect + M*Yrect)+ei(-N*Xrect + M*Yrect))/2.0;
     
     return part1;
 }
@@ -542,7 +542,7 @@ std::complex<double> pmmFunction::bundle(double &x, double &y, unsigned int &i) 
     M = freqs[i].M();
     std::complex<double> part1 = (ei(N*Xrect + M*Yrect)+ei(-N*Xrect + M*Yrect))/4.0;
     std::complex<double> part2 = (ei(-N*Xrect - M*Yrect)+ei(N*Xrect - M*Yrect))/4.0;
-    return (part1+part2)*ei(qSqrt(SQ(N) + SQ(M))*T*waveVelocity);
+    return (part1+part2);
 }
 
 std::complex<double> pmmFunction::operator ()(double i, double j)
@@ -571,7 +571,7 @@ std::complex<double> pggFunction::bundle(double &x, double &y, unsigned int &i) 
     std::complex<double> part1 = (ei(N*Xrect + M*Yrect)+ei(-N*Xrect -M*Yrect))/4.0;
     std::complex<double> part2 = (ei(-N*Xrect + M*Yrect)+ei(N*Xrect - M*Yrect))/4.0;
     part2 *=nega;
-    return (part1+part2)*ei(qSqrt(SQ(N) + SQ(M))*T*waveVelocity);
+    return (part1+part2);
 }
 
 std::complex<double> pggFunction::operator ()(double i, double j)
@@ -600,7 +600,7 @@ std::complex<double> pmgFunction::bundle(double &x, double &y, unsigned int &i) 
     std::complex<double> part1 = (ei(N*Xrect + M*Yrect)+ei(-N*Xrect -M*Yrect))/4.0;
     std::complex<double> part2 = (ei(-N*Xrect + M*Yrect)+ei(N*Xrect - M*Yrect))/4.0;
     part2 *=nega;
-    return (part1+part2)*ei(qSqrt(SQ(N) + SQ(M))*T*waveVelocity);
+    return (part1+part2);
 }
 
 std::complex<double> pmgFunction::operator ()(double i, double j)
@@ -627,7 +627,7 @@ std::complex<double> pgFunction::bundle(double &x, double &y, unsigned int &i) c
     parity = M%2;
     std::complex<double> part1 = (ei(N*Xrect + M*Yrect)+pow(-1,parity)*ei(-N*Xrect + M*Yrect))/2.0;
     
-    return part1 * ei(qSqrt(SQ(N) + SQ(M))*T*waveVelocity);
+    return part1;
 }
 
 std::complex<double> pgFunction::operator ()(double i, double j)
@@ -659,7 +659,7 @@ std::complex<double> pmgpgFunction::bundle(double &x, double &y, unsigned int &i
     std::complex<double> part4 = ei(N*Xrect - M*Yrect);
     part3 *=nega;
     part4 *=nega;
-    return (part1-part2+ (part3)-(part4))*ei(qSqrt(SQ(N) + SQ(M))*T*waveVelocity) / 4.0;
+    return (part1-part2+ (part3)-(part4)) / 4.0;
 }
 //Note: as a hack, I made part2 and part4 positive to create a pmg fcn.Changed back9/9/13
 std::complex<double> pmgpgFunction::operator ()(double i, double j)
@@ -686,7 +686,7 @@ std::complex<double> rectangularpairedFunction::bundle(double &x, double &y, uns
     std::complex<double> part1 = ei(N*Xrect2 + M*Yrect2);
     std::complex<double> part2 = ei(-N*Xrect2 - M*Yrect2);
     
-    return (part1 + part2)*ei(qSqrt(SQ(N) + SQ(M))*T*waveVelocity) / 2.0;
+    return (part1 + part2) / 2.0;
     
 }
 
@@ -969,7 +969,7 @@ std::complex<double> holoFunction::bundle(double &x, double &y, unsigned int &i)
     int N;
     N = freqs[i].N();
     std::complex<double> ans(x , y);
-    ans=pow(ans,N) * T * waveVelocity;  // may have an error
+    ans=pow(ans,N);  // may have an error
     return ans;
     
 }
@@ -996,10 +996,10 @@ std::complex<double> contFunction::bundle(double &x, double &y, unsigned int &i)
     N = freqs[i].N();
     std::complex<double> ans(x , y);
     if (N>0)
-        ans = pow(ans,N) * T * waveVelocity;    // may have an error
+        ans = pow(ans,N);    // may have an error
     else {
         ans = conj(ans);
-        ans = pow(ans,0-N) * T * waveVelocity;  // may have an error
+        ans = pow(ans,0-N);  // may have an error
     }
 
     return ans;

@@ -54,7 +54,7 @@ MainWindow::MainWindow()
         currInterface->setFont(font);
     }
     
-    setWindowTitle(tr("Wallpaper Generation"));
+    setWindowTitle(tr("Fibonacci Spiral"));
     
     //setFixedSize(sizeHint());
     

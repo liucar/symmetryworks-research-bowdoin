@@ -407,19 +407,15 @@ public:
     QHBoxLayout *scaleALayout;
     QHBoxLayout *scaleRLayout;
     QHBoxLayout *scaleTLayout;
-    QHBoxLayout *waveVelocityLayout;
     QLabel *scaleALabel;
     QLabel *scaleRLabel;
     QLabel *scaleTLabel;
-    QLabel *waveVelocityLabel;
     QDoubleSlider *scaleAEditSlider;
     QDoubleSlider *scaleREditSlider;
     QDoubleSlider *scaleTEditSlider;
-    QDoubleSlider *waveVelocityEditSlider;
     CustomLineEdit *scaleAEdit;
     CustomLineEdit *scaleREdit;
     CustomLineEdit *scaleTEdit;
-    CustomLineEdit *waveVelocityEdit;
     QPushButton *scalePlaneEdit;
     
     // functionConstants SUBELEMENTS
@@ -620,8 +616,6 @@ signals:
     void changeScaleR(double val);
     void changeScaleT();
     void changeScaleT(double val);
-    void changeWaveVelocity();
-    void changeWaveVelocity(double val);
     void changeOverflowColor(const QColor &color) { currColorWheel->changeOverflowColor(color); updatePreviewDisplay(); }
     
     void exportImageFunction() { imageDimensionsPopUp->show(); }
