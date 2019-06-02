@@ -1,2 +1,2 @@
-# symmetryworks-research-bowdoin
-Frank Farris - SymmetryWorks! - Bowdoin Summer Research 2016
+# vibrating-wallpaper
+Frank Farris - updated by Caroline Liu - SymmetryWorks! - v. Vibrating Wallpaper
