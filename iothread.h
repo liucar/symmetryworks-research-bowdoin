@@ -23,7 +23,6 @@ signals:
     
 protected:
     void run() Q_DECL_OVERRIDE;
-    
 private:
     QMutex mutex;
     

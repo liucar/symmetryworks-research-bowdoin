@@ -30,11 +30,7 @@ ColorWheel* ColorWheel::clone()
     c->setCurrent(this->currentSel);
     c->changeOverflowColor(this->getOverflowColor());
     
-    if (!(this->image.isNull())) {
-        c->image = getImage();
-    } else {
-        
-    }
+    c->changeImage(this->getImage());
     
     return c;
 }
@@ -522,8 +518,8 @@ QRgb ColorWheel::FromImage(std::complex<double> zin)
     
     if(x >= -2.0 && x < 2.0 && y >= -2.0 && y < 2.0)      //our image is defined within the Cartesian coordinates
     {                                                       // -2 <= x <= 2  and -2 <= y <= 2
-        int translated_x = (int) ((x + 2.0) * (image_dim / 4.0));
-        int translated_y = (int) image_dim - ((y + 2.0) * (image_dim / 4.0));
+        int translated_x = (int) (((x + 2.0)/4.0) * (image_dim ));
+        int translated_y = (int) image_dim - (((y + 2.0)/ 4.0) * (image_dim ));
         
         color = image.pixel(translated_x, translated_y);
     }

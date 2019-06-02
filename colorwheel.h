@@ -14,8 +14,8 @@
 
 #include "geomath.h"
 
-#define image_dim 3000
-
+//#define image_dim 3000
+const int image_dim=2000;
 const unsigned int ICOS_FACES_SIZE = 20;
 const unsigned int ZONE_VECT_SIZE = 32;
 
@@ -32,8 +32,9 @@ public:
     void loadImage(QString filename);
     
     ColorWheel* clone();
-    QImage getImage() { return image; }
+    
     QColor getOverflowColor() { return overflowColor; }
+    QImage getImage() { return image; }
     
 private:
     
@@ -84,6 +85,7 @@ private:
     public slots:
     void setCurrent(int index);
     void changeOverflowColor(const QColor &color) { overflowColor = color; }
+    void changeImage(const QImage &imageIn) { image = imageIn; }
     
     
 };

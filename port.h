@@ -25,10 +25,10 @@ public:
         currFunction = newFunction;
         controller->changeFunction(newFunction);
     }
-    void changeColorWheel(ColorWheel *newColorWheel) {
-        currColorWheel = newColorWheel;
-        controller->changeColorWheel(newColorWheel);
-    }
+//    void changeColorWheel(ColorWheel *newColorWheel) {
+//        currColorWheel = newColorWheel;
+//        controller->changeColorWheel(newColorWheel);
+//    }
     void changeSettings(Settings *newSettings) {
         currSettings = newSettings;
         

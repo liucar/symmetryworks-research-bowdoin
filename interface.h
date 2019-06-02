@@ -30,7 +30,7 @@
 #include <QFileDialog>
 #include <QSignalMapper>
 #include <QDateTime>
-#include <QShortCut>
+#include <QShortcut>
 #include <QAction>
 #include <QMessageBox>
 #include <QDialogButtonBox>
@@ -47,6 +47,7 @@
 #include <QHeaderView>
 #include <QToolTip>
 #include <QStandardPaths>
+#include <QPropertyAnimation>
 
 #include "historydisplay.h"
 #include "polarplane.h"
@@ -369,6 +370,7 @@ private:
 class Interface : public QWidget
 {
     Q_OBJECT
+
 public:
     Interface(QWidget *parent = 0);
     ~Interface() {;}
@@ -404,12 +406,20 @@ public:
     QVBoxLayout *globalScalingBoxLayout;
     QHBoxLayout *scaleALayout;
     QHBoxLayout *scaleRLayout;
+    QHBoxLayout *scaleTLayout;
+    QHBoxLayout *morphLayout;
     QLabel *scaleALabel;
     QLabel *scaleRLabel;
+    QLabel *scaleTLabel;
+    QLabel *morphLabel;
     QDoubleSlider *scaleAEditSlider;
     QDoubleSlider *scaleREditSlider;
+    QDoubleSlider *scaleTEditSlider;
+    QDoubleSlider *morphEditSlider;
     CustomLineEdit *scaleAEdit;
     CustomLineEdit *scaleREdit;
+    CustomLineEdit *scaleTEdit;
+    CustomLineEdit *morphEdit;
     QPushButton *scalePlaneEdit;
     
     // functionConstants SUBELEMENTS
@@ -455,11 +465,13 @@ public:
     QVBoxLayout *patternTypeBoxOverallLayout;
     QVBoxLayout *patternTypeBoxLayout;
     QHBoxLayout *functionLayout;
+    QHBoxLayout *fibLayout;
     QHBoxLayout *colorwheelLayout;
     QHBoxLayout *fromImageLayout;
     
     QLabel *colorwheelLabel;
     QLabel *functionLabel;
+    QLabel *fibLabel;
     QLabel *imagePathLabel;
     QLabel *numTermsLabel;
     QLabel *freqpairLabel;
@@ -472,6 +484,7 @@ public:
     QSpacerItem *gspacer5;
     QComboBox *colorwheelSel;
     QComboBox *functionSel;
+    QComboBox *fibSel;
     QPushButton *setLoadedImage;
     QRadioButton *fromImageButton;
     QRadioButton *fromColorWheelButton;
@@ -515,9 +528,14 @@ public:
     
     // DISP SUBELEMENTS
     QPushButton *snapshotButton;
+    QPushButton *animationButton;
+    QPushButton *playAnimationButton;
+    QPushButton *stopAnimationButton;
     Display *disp;
     QVBoxLayout *dispLayout;
     QHBoxLayout *buttonLayout;
+    QHBoxLayout *animButtonLayout;
+    QHBoxLayout *animButtonControlsLayout;
     
     // SHORTCUTS
     QShortcut *updatePreviewShortcut;
@@ -574,6 +592,7 @@ signals:
     
     //TODO for each change function, push current value onto the undostack...each action has its own command?
     void changeFunction(int index);
+    void changeFib(int index);
     void changeWorldWidth(double val);
     void changeWorldWidth();
     void changeWorldHeight(double val);
@@ -592,11 +611,16 @@ signals:
     void changeScaleA(double val);
     void changeScaleR();
     void changeScaleR(double val);
+    void changeScaleT();
+    void changeScaleT(double val);
+    void changeMorph();
+    void changeMorph(double val);
     void changeOverflowColor(const QColor &color) { currColorWheel->changeOverflowColor(color); updatePreviewDisplay(); }
     
     void exportImageFunction() { imageDimensionsPopUp->show(); }
     void cancelImageExport() { imageDimensionsPopUp->hide(); }
     void startImageExport();
+    void startAnimationExport();
     
     void resetFunction();
     void loadFromSettings();
@@ -605,6 +629,11 @@ signals:
    
     void previewDisplayResetSize() {disp->resetSize();}
     void snapshotFunction();
+    void animationFunction();
+    void continueAnimationExport();
+    void playAnimationFunction();
+    void continueAnimation();
+    void stopAnimationFunction();
     void termViewPopUp();
     void addTerm();
     void updateTermTable(QObject *cell);
@@ -694,6 +723,8 @@ private:
     bool heightChanged;
     bool widthChanged;
     bool errPrint;
+    bool isAnimating;
+    bool isAnimExporting;
     
     //I/O-related variables    
     QString saveloadPath;

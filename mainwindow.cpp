@@ -54,7 +54,7 @@ MainWindow::MainWindow()
         currInterface->setFont(font);
     }
     
-    setWindowTitle(tr("SymmetryWorks"));
+    setWindowTitle(tr("Fibonacci Morph"));
     
     //setFixedSize(sizeHint());
     

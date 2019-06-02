@@ -56,7 +56,7 @@ void RenderThread::run()
     forever {
         mutex.lock();
         
-        double worldX, worldY;
+        double worldX, worldY,ang,rad;
         double worldYStart1 = this->worldYStart1;
         double worldYStart2 = this->worldYStart2;
         double worldXStart = this->worldXStart;
@@ -90,10 +90,12 @@ void RenderThread::run()
                 
                 //run the point through our mathematical function
                 //...then convert that complex output to a color according to our color wheel
-                
-                fout = (*currFunction)(worldX,worldY);
-                QRgb color = (*currColorWheel)(fout);
-                
+                rad=qLn(qSqrt(worldX*worldX+worldY*worldY));
+                ang=qAtan2(worldY,worldX)-2*pi*(currFunction->getF2()/ (currFunction->getF1()+currFunction->getF2()))*currFunction->getT();
+                fout = (*currFunction)(rad,ang);  // math function to get complex coordinate
+                fout*=ei(currFunction->getMorph()*rad);
+                QRgb color = (*currColorWheel)(fout);   // colorification from complex coordinate
+
                 if (y % 10 == 0 && x % 10 == 0) {
                     emit newImageDataPoint(fout);
                 }

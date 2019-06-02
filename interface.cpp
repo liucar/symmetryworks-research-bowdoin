@@ -1,4 +1,5 @@
-#include "Interface.h"
+#include "interface.h"
+#include <cstdlib>
 /*
  *
  *  Interface class manages the UI elements for wallgen.
@@ -18,6 +19,8 @@ Interface::Interface(QWidget *parent) : QWidget(parent)
     termIndex = 0;
     saveloadPath = QDir::homePath();
     errPrint = false;
+    isAnimating = false;
+    isAnimExporting = false;
     
     // FUNCTIONAL OBJECTS
     functionVector.push_back(new hex3Function());
@@ -80,7 +83,9 @@ Interface::Interface(QWidget *parent) : QWidget(parent)
     setTabOrder(functionSel, colorwheelSel);
     setTabOrder(colorwheelSel, scaleREdit);
     setTabOrder(scaleREdit, scaleAEdit);
-    setTabOrder(scaleAEdit, XShiftEdit);
+    setTabOrder(scaleAEdit, scaleTEdit);
+    setTabOrder(scaleTEdit, morphEdit);
+    setTabOrder(morphEdit, XShiftEdit);
     setTabOrder(XShiftEdit, YShiftEdit);
     setTabOrder(YShiftEdit, worldWidthEdit);
     setTabOrder(worldWidthEdit, worldHeightEdit);
@@ -178,10 +183,19 @@ void Interface::initPreviewDisplay()
     
     disp = new Display(previewSize, previewSize, displayWidget);
     snapshotButton= new QPushButton(tr("Snapshot"), this);
+    animationButton = new QPushButton(tr("Animate and Export"), this);
+    playAnimationButton = new QPushButton(tr("Play Animation"), this);
+    stopAnimationButton = new QPushButton(tr("Stop Animation"), this);
+    stopAnimationButton->setEnabled(false);
     dispLayout = new QVBoxLayout(displayWidget);
     //dispLayout->setSizeConstraint(QLayout::SetMinimumSize);
     buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(snapshotButton);
+    animButtonLayout = new QHBoxLayout();
+    animButtonLayout->addWidget(animationButton);
+    animButtonControlsLayout = new QHBoxLayout();
+    animButtonControlsLayout->addWidget(playAnimationButton);
+    animButtonControlsLayout->addWidget(stopAnimationButton);
     
     imageExportPort = new Port(currFunction, currColorWheel, settings->OWidth, settings->OHeight, settings);
     previewDisplayPort = new Port(currFunction, currColorWheel, disp->getWidth(), disp->getHeight(), settings);
@@ -196,46 +210,44 @@ void Interface::initPreviewDisplay()
     dispLayout->addWidget(disp);
     dispLayout->addLayout(displayProgressBar->layout);
     dispLayout->addLayout(buttonLayout);
+    dispLayout->addLayout(animButtonLayout);
+    dispLayout->addLayout(animButtonControlsLayout);
     dispLayout->addStretch();
 }
 
 // INIT FUNCTION CONSTANTS EDIT BOX
 void Interface::initFunctionConstants()
 {
-    
     functionConstantsBox = new QGroupBox(tr("Function Parameters"), functionConstantsWidget);
     functionConstantsBoxLayout = new QVBoxLayout(functionConstantsBox);
     functionTermsGrid = new QGridLayout();
-    
-    QFrame* currTermLine = new QFrame(functionConstantsBox);
-    currTermLine->setLineWidth(2);
-    currTermLine->setMidLineWidth(1);
-    currTermLine->setFrameShape(QFrame::VLine);
-    currTermLine->setFrameShadow(QFrame::Raised);
-    
+
+
+
     currTermLabel = new QLabel(functionConstantsBox);
     currTermLabel->setText(tr("<b>Current Term:<\b>"));
     currTermEdit = new CustomSpinBox(functionConstantsBox);
     currTermEdit->setRange(1, numTerms);
     currTermEdit->installEventFilter(this);
-    
-    freqpairLabel = new QLabel(tr("Frequency Pair: "), functionConstantsBox);
-    coeffLabel = new QLabel(tr("Coefficient Pair: "), functionConstantsBox);
-    
+    currTermEdit->setFixedWidth(40);
+
+    freqpairLabel = new QLabel(tr(""), functionConstantsBox);
+    coeffLabel = new QLabel(tr(""), functionConstantsBox);
+
     nLabel = new QLabel(functionConstantsBox);
     mLabel = new QLabel(functionConstantsBox);
     aLabel = new QLabel(functionConstantsBox);
     rLabel = new QLabel(functionConstantsBox);
     aValueLabel = new QLabel(functionConstantsBox);
     rValueLabel = new QLabel(functionConstantsBox);
-    
+
     nEdit = new QSpinBox(functionConstantsBox);
     mEdit = new QSpinBox(functionConstantsBox);
     aEdit = new QDoubleSlider(functionConstantsBox);
     rEdit = new QDoubleSlider(functionConstantsBox);
     nEdit->installEventFilter(this);
     mEdit->installEventFilter(this);
-    
+
     nEdit->setFixedWidth(100);
     mEdit->setFixedWidth(100);
     rEdit->setFixedWidth(100);
@@ -249,65 +261,65 @@ void Interface::initFunctionConstants()
     aEdit->setSingleStep(ANGLE_SPINBOX_STEP * 100);
     rEdit->setRange(0,(int)MAX_RADIUS * 100);
     rEdit->setSingleStep(RADIUS_SPINBOX_STEP * 10);
-    
+
     nEdit->setAlignment(Qt::AlignCenter);
     mEdit->setAlignment(Qt::AlignCenter);
     aEdit->setOrientation(Qt::Horizontal);
     rEdit->setOrientation(Qt::Horizontal);
-    
+
     nLabel->setFixedWidth(18);
     mLabel->setFixedWidth(18);
     rLabel->setFixedWidth(18);
     aLabel->setFixedWidth(18);
     aValueLabel->setFixedWidth(35);
     rValueLabel->setFixedWidth(35);
-    
+
     functionConstantsWidgetLayout = new QVBoxLayout(functionConstantsWidget);
-    
+
     functionConstantsScalingTerms = new QHBoxLayout();
     termEditLayout = new QHBoxLayout();
     functionConstantsFreqs = new QHBoxLayout();
     functionConstantsCoeffs = new QHBoxLayout();
     functionConstantsPairs = new QVBoxLayout();
-    
+
     coeffPlaneEdit = new QPushButton(tr("Set on Plane"), functionConstantsBox);
-    
-    numTermsLabel = new QLabel(tr("<b>Total Number of Terms: <\b>"), functionConstantsBox);
+
+    numTermsLabel = new QLabel(tr("<b>Total Terms: <\b>"), functionConstantsBox);
     numTermsEdit = new QSpinBox(functionConstantsBox);
     numTermsEdit->setValue(1);
     numTermsEdit->setRange(1, MAX_NUM_TERMS);
     numTermsEdit->installEventFilter(this);
-    
+
     QFrame* line1 = new QFrame(functionConstantsBox);
-    line1->setLineWidth(2);
+    line1->setLineWidth(1);
     line1->setMidLineWidth(1);
     line1->setFrameShape(QFrame::HLine);
     line1->setFrameShadow(QFrame::Raised);
-    
+
     QFrame* line2 = new QFrame(functionConstantsBox);
     line2->setLineWidth(2);
     line2->setMidLineWidth(1);
     line2->setFrameShape(QFrame::HLine);
     line2->setFrameShadow(QFrame::Raised);
-    
+
     termViewButton = new QPushButton(tr("View/Edit All Terms"), functionConstantsBox);
     termViewWidget = new QWidget(this, Qt::Window);
     termViewWidget->setWindowTitle(tr("Edit Function Terms"));
     termViewWidget->setMinimumWidth(340);
     termViewLayout = new QVBoxLayout(termViewWidget);
-    
+
     termViewWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     termViewWidget->hide();
     termViewTable = new QTableWidget(termViewWidget);
     termViewTable->setColumnCount(6);
-    
+
     termViewHorizontalHeaders << tr("Term") << tr("m") << tr("n") << tr("a") << tr("r") << tr("");
     termViewTable->setHorizontalHeaderLabels(termViewHorizontalHeaders);
     termViewTable->verticalHeader()->hide();
-    
+
     addTermButton = new QPushButton(tr("Add term..."));
     addTermButton->setIcon(*(new QIcon(":/Images/Icons/plus.png")));
-    
+
     // resize all columns to maximum stretch
     for (int c = 0; c < termViewTable->horizontalHeader()->count(); ++c)
     {
@@ -316,64 +328,67 @@ void Interface::initFunctionConstants()
         else
             termViewTable->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
     }
-    
+
     // signal mappers
     termViewTableMapper = new QSignalMapper(this);
     removeTermMapper = new QSignalMapper(this);
-    
+
     //add initial term
     addTerm();
-    
+
     termViewHeaderVertical= termViewTable->verticalHeader();
     termViewHeaderVertical->resizeSections(QHeaderView::Stretch);
-    
+
     termViewLayout->addWidget(termViewTable);
     termViewLayout->addWidget(addTermButton);
     termViewWidget->setLayout(termViewLayout);
-    
-    
+
+
     // set up the grid layout
     for (int r = 0; r < 5; r++) {
         switch(r) {
             case 0:
                 functionTermsGrid->addWidget(numTermsLabel, r, 0, 1, 1, Qt::AlignCenter);
                 functionTermsGrid->addWidget(numTermsEdit, r, 1, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(termViewButton, 0, 2, 1, 1, Qt::AlignCenter);
+                functionTermsGrid->addWidget(currTermLabel, r, 2, 1, 1, Qt::AlignRight);
+                functionTermsGrid->addWidget(currTermEdit, r, 3, 1, 1, Qt::AlignCenter);
+                functionTermsGrid->addWidget(termViewButton, 0, 4, 1, 1, Qt::AlignRight);
+                functionTermsGrid->addWidget(coeffPlaneEdit, r, 5, 1, 1, Qt::AlignCenter);
                 // functionTermsGrid->setVerticalSpacing(20);
                 break;
             case 1:
                 functionTermsGrid->addWidget(line1, r, 0, 1, 10);
                 break;
             case 2:
-                functionTermsGrid->addWidget(currTermLabel, r, 0, 2, 1, Qt::AlignRight);
-                functionTermsGrid->addWidget(currTermEdit, r, 1, 2, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(currTermLine, r, 2, 2, 1);
-                functionTermsGrid->addWidget(freqpairLabel, r, 2, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(nLabel, r, 3, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(nEdit, r, 4, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(mLabel, r, 6, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(mEdit, r, 7, 1, 1, Qt::AlignCenter);
+
+//                functionTermsGrid->addWidget(freqpairLabel, r, 0, 1, 1, Qt::AlignCenter);
+                functionTermsGrid->addWidget(nLabel, r, 0, 1, 1, Qt::AlignRight);
+                functionTermsGrid->addWidget(nEdit, r, 1, 1, 1, Qt::AlignLeft);
+                functionTermsGrid->addWidget(mLabel, r, 2, 1, 1, Qt::AlignRight);
+                functionTermsGrid->addWidget(mEdit, r, 3, 1, 1, Qt::AlignLeft);
+
+//                functionTermsGrid->addWidget(coeffLabel, r, 2, 1, 1, Qt::AlignCenter);
+                functionTermsGrid->addWidget(rLabel, r, 4, 1, 1, Qt::AlignRight);
+                functionTermsGrid->addWidget(rEdit, r, 5, 1, 1, Qt::AlignCenter);
+                functionTermsGrid->addWidget(rValueLabel, r, 6, 1, 1, Qt::AlignLeft);
+                functionTermsGrid->addWidget(aLabel, r, 7, 1, 1, Qt::AlignCenter);
+                functionTermsGrid->addWidget(aEdit, r, 8, 1, 1, Qt::AlignCenter);
+                functionTermsGrid->addWidget(aValueLabel, r, 9, 1, 1, Qt::AlignLeft);
                 break;
             case 3:
-                functionTermsGrid->addWidget(coeffLabel, r, 2, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(rLabel, r, 3, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(rEdit, r, 4, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(rValueLabel, r, 5, 1, 1, Qt::AlignLeft);
-                functionTermsGrid->addWidget(aLabel, r, 6, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(aEdit, r, 7, 1, 1, Qt::AlignCenter);
-                functionTermsGrid->addWidget(aValueLabel, r, 8, 1, 1, Qt::AlignLeft);
-                functionTermsGrid->addWidget(coeffPlaneEdit, r, 9, 1, 1, Qt::AlignCenter);
+
                 break;
             case 4:
                 functionTermsGrid->addWidget(line2, r, 0, 1, 10);
         }
     }
-    
-    
-    
+
+
+
     functionConstantsBoxLayout->addLayout(functionTermsGrid);
     functionConstantsWidgetLayout->addWidget(functionConstantsBox);
-    
+
+
 }
 
 // INIT GLOBAL SCALING FACTORS BOX
@@ -384,29 +399,51 @@ void Interface::initGlobalScaling()
     
     scaleRLayout = new QHBoxLayout();
     scaleALayout = new QHBoxLayout();
-    
+    scaleTLayout = new QHBoxLayout();
+    morphLayout = new QHBoxLayout();
+
     scaleALabel = new QLabel(tr("Scaling Angle"), globalScalingBox);
     scaleRLabel = new QLabel(tr("Scaling Radius"), globalScalingBox);
+    scaleTLabel = new QLabel(tr("Frame Number"), globalScalingBox);
+    morphLabel = new QLabel(tr("Morph"), globalScalingBox);
     scaleAEditSlider = new QDoubleSlider(globalScalingBox);
     scaleREditSlider = new QDoubleSlider(globalScalingBox);
+    scaleTEditSlider = new QDoubleSlider(globalScalingBox);
+    morphEditSlider = new QDoubleSlider(globalScalingBox);
     scaleAEdit = new CustomLineEdit(patternTypeBox);
     scaleREdit = new CustomLineEdit(patternTypeBox);
+    scaleTEdit = new CustomLineEdit(patternTypeBox);
+    morphEdit = new CustomLineEdit(patternTypeBox);
     
     
     scaleAEdit->setValidator(doubleValidate);
     scaleREdit->setValidator(doubleValidate);
+    scaleTEdit->setValidator(doubleValidate);
+    morphEdit->setValidator(doubleValidate);
     scaleAEdit->setFixedWidth(40);
     scaleREdit->setFixedWidth(40);
+    scaleTEdit->setFixedWidth(40);
+    morphEdit->setFixedWidth(40);
     scaleAEdit->setAlignment(Qt::AlignCenter);
     scaleREdit->setAlignment(Qt::AlignCenter);
+    scaleTEdit->setAlignment(Qt::AlignCenter);
+    morphEdit->setAlignment(Qt::AlignCenter);
     scaleAEditSlider->setOrientation(Qt::Horizontal);
     scaleREditSlider->setOrientation(Qt::Horizontal);
+    scaleTEditSlider->setOrientation(Qt::Horizontal);
+    morphEditSlider->setOrientation(Qt::Horizontal);
     scaleREditSlider->setRange(0, 500);
     scaleREditSlider->setSingleStep(1);
     scaleAEditSlider->setRange(-314,314);
     scaleAEditSlider->setSingleStep(1);
+    scaleTEditSlider->setRange(0, 20000);
+    scaleTEditSlider->setSingleStep(1);
+    morphEditSlider->setRange(-200, 200);
+    morphEditSlider->setSingleStep(1);
     scaleREditSlider->setFixedWidth(100);
     scaleAEditSlider->setFixedWidth(100);
+    scaleTEditSlider->setFixedWidth(100);
+    morphEditSlider->setFixedWidth(100);
     scalePlaneEdit = new QPushButton(tr("Set on Plane"), globalScalingBox);
     
     scaleRLayout->addWidget(scaleRLabel);
@@ -415,15 +452,27 @@ void Interface::initGlobalScaling()
     scaleALayout->addWidget(scaleALabel);
     scaleALayout->addWidget(scaleAEditSlider);
     scaleALayout->addWidget(scaleAEdit);
+    scaleTLayout->addWidget(scaleTLabel);
+    scaleTLayout->addWidget(scaleTEditSlider);
+    scaleTLayout->addWidget(scaleTEdit);
+    morphLayout->addWidget(morphLabel);
+    morphLayout->addWidget(morphEditSlider);
+    morphLayout->addWidget(morphEdit);
     
     globalScalingBoxLayout->addLayout(scaleRLayout);
     globalScalingBoxLayout->addLayout(scaleALayout);
+    globalScalingBoxLayout->addLayout(scaleTLayout);
+    globalScalingBoxLayout->addLayout(morphLayout);
     globalScalingBoxLayout->addWidget(scalePlaneEdit);
     
     scaleREdit->setText(QString::number(currFunction->getScaleR()));
     scaleAEdit->setText(QString::number(currFunction->getScaleA()));
+    scaleTEdit->setText(QString::number(currFunction->getT()));
+    morphEdit->setText(QString::number(currFunction->getMorph()));
     scaleREditSlider->setValue(currFunction->getScaleR() * 100.0);
     scaleAEditSlider->setValue(currFunction->getScaleA() * 100.0);
+    scaleTEditSlider->setValue(currFunction->getT() * 100.0);
+    morphEditSlider->setValue(currFunction->getMorph() * 100.0);
     
 }
 
@@ -432,28 +481,26 @@ void Interface::initPatternType()
 {
     
     functionSel = new QComboBox(patternTypeBox);
+    fibSel = new QComboBox(patternTypeBox);
     colorwheelSel = new QComboBox(patternTypeBox);
     
     functionSel->setFocusPolicy(Qt::StrongFocus);
+    fibSel->setFocusPolicy(Qt::StrongFocus);
     colorwheelSel->setFocusPolicy(Qt::StrongFocus);
     
-    gspacer1 = new QSpacerItem(0,20);
-    gspacer2 = new QSpacerItem(0,10);
-    gspacer3 = new QSpacerItem(0,10);
-    gspacer4 = new QSpacerItem(0,50);
-    gspacer5 = new QSpacerItem(0,10);
     
     patternTypeBoxLayout = new QVBoxLayout(patternTypeBox);
     functionLayout = new QHBoxLayout();
+    fibLayout = new QHBoxLayout();
     colorwheelLayout = new QHBoxLayout();
     fromImageLayout = new QHBoxLayout();
-    
     
     setLoadedImage = new QPushButton(tr("Set/Change Image..."), patternTypeBox);
     fromImageButton = new QRadioButton(tr("Image"), patternTypeBox);
     fromColorWheelButton = new QRadioButton(tr("Color Wheel"), patternTypeBox);
     // showImageDataGraphButton = new QPushButton(tr("Show Graph"), patternTypeBox);
     functionLabel = new QLabel(patternTypeBox);
+    fibLabel = new QLabel(patternTypeBox);
     colorwheelLabel = new QLabel(patternTypeBox);
     imagePathLabel = new QLabel(patternTypeBox);
     
@@ -489,6 +536,16 @@ void Interface::initPatternType()
     functionSel->addItem("pg");
     functionSel->addItem("cm");
     functionSel->addItem("Original");
+
+    // fib selector
+    fibSel->addItem("2,3");
+    fibSel->addItem("3,5");
+    fibSel->addItem("5,8");
+    fibSel->addItem("8,13");
+    fibSel->addItem("13,21");
+    fibSel->addItem("21,34");
+    fibSel->addItem("34,55");
+    fibSel->setCurrentIndex(3);
     
     // color wheel selector
     colorwheelSel->addItem("IcosColor");
@@ -501,6 +558,7 @@ void Interface::initPatternType()
     colorwheelSel->addItem("Sect6Col");
     colorwheelSel->addItem("WinCol");
     functionLabel->setText(tr("<b>Pattern<\b>"));
+    fibLabel->setText(tr("<b>Fibonacci</b>"));
     colorwheelLabel->setText(tr("<b>Color<\b>"));
     
     //initialize function previews window
@@ -591,6 +649,10 @@ void Interface::initPatternType()
     functionLayout->addWidget(functionSel);
     functionLayout->addWidget(viewFunctionIconsButton);
     patternTypeBoxLayout->addLayout(functionLayout);
+    patternTypeBoxLayout->addWidget(endPattern);
+    fibLayout->addWidget(fibLabel);
+    fibLayout->addWidget(fibSel);
+    patternTypeBoxLayout->addLayout(fibLayout);
     patternTypeBoxLayout->addWidget(endPattern);
     patternTypeBoxLayout->addWidget(colorwheelLabel);
     
@@ -780,7 +842,9 @@ void Interface::initToolTips()
     
     scaleRLabel->setToolTip("Changes which points on the color wheel\n will be called up by the wallpaper function.");
     scaleALabel->setToolTip("Changes which points on the color wheel\n will be called up by the wallpaper function.");
-    
+    scaleTLabel->setToolTip("Changes how far forward in time the\n wallpaper function is (starts at T = 0).");
+//    waveVelocityLabel->setToolTip("Changes the speed at which the\n wallpaper function moves forward in time\n (waveVelocity = 1 means 1x speed).");
+
     QString freqToolTip = "Larger values of <b>n</b> and <b>m</b> will make your wallpaper pattern more 'wiggly.' \nThese represent directional frequencies of waves.";
     freqpairLabel->setToolTip(freqToolTip);
     mLabel->setToolTip(freqToolTip);
@@ -807,8 +871,12 @@ void Interface::connectAllSignals()
     connect(disp, SIGNAL(displayMoved(QPoint)), this, SLOT(updateShifting(QPoint)));
 
     connect(snapshotButton, SIGNAL(clicked()), this, SLOT(snapshotFunction()));
-    
+    connect(animationButton, SIGNAL(clicked()), this, SLOT(animationFunction()));
+    connect(playAnimationButton, SIGNAL(clicked()), this, SLOT(playAnimationFunction()));
+    connect(stopAnimationButton, SIGNAL(clicked()), this, SLOT(stopAnimationFunction()));
+
     connect(functionSel, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFunction(int)));
+    connect(fibSel, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFib(int)));
     connect(colorwheelSel, SIGNAL(currentIndexChanged(int)), currColorWheel, SLOT(setCurrent(int)));
     connect(colorwheelSel, SIGNAL(currentIndexChanged(int)), this, SLOT(colorWheelChanged(int)));
     connect(fromColorWheelButton, SIGNAL(clicked()), this, SLOT(selectColorWheel()));
@@ -820,11 +888,17 @@ void Interface::connectAllSignals()
     
     connect(scaleREdit, SIGNAL(returnPressed()), this, SLOT(changeScaleR()));
     connect(scaleAEdit, SIGNAL(returnPressed()), this, SLOT(changeScaleA()));
+    connect(scaleTEdit, SIGNAL(returnPressed()), this, SLOT(changeScaleT()));
+    connect(morphEdit, SIGNAL(returnPressed()), this, SLOT(changeMorph()));
     connect(scaleREditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeScaleR(double)));
     connect(scaleREditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
     connect(scaleAEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeScaleA(double)));
     connect(scaleAEditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
-    
+    connect(scaleTEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeScaleT(double)));
+    connect(scaleTEditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
+    connect(morphEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeMorph(double)));
+    connect(morphEditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
+
     connect(numTermsEdit, SIGNAL(valueChanged(int)), this, SLOT(changeNumTerms(int)));
     connect(currTermEdit, SIGNAL(valueChanged(int)), this, SLOT(updateCurrTerm(int)));
     
@@ -836,7 +910,7 @@ void Interface::connectAllSignals()
     connect(mEdit, SIGNAL(valueChanged(int)), this, SLOT(changeM(int)));
     connect(rEdit, SIGNAL(doubleValueChanged(double)), this, SLOT(changeR(double)));
     connect(aEdit, SIGNAL(doubleValueChanged(double)), this, SLOT(changeA(double)));
-    
+
     connect(worldWidthEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeWorldWidth(double)));
     connect(worldWidthEditSlider, SIGNAL(newSliderAction(QObject*, double, double)), this, SLOT(createUndoAction(QObject*, double, double)));
     connect(worldHeightEditSlider, SIGNAL(doubleValueChanged(double)), this, SLOT(changeWorldHeight(double)));
@@ -865,6 +939,7 @@ void Interface::connectAllSignals()
     connect(previewDisplayPort->getControllerObject(), SIGNAL(partialProgressChanged(double)), displayProgressBar, SLOT(partialUpdate(double)));
     connect(previewDisplayPort, SIGNAL(paintingFinished(bool)), this, SLOT(resetMainWindowButton(bool)));
     connect(displayProgressBar, SIGNAL(renderFinished()), this, SLOT(resetTableButton()));
+    connect(displayProgressBar, SIGNAL(renderFinished()), this, SLOT(continueAnimation()));
     connect(imageExportPort, SIGNAL(finishedExport(QString)), this, SLOT(popUpImageExportFinished(QString)));
     connect(imageExportPort->getControllerObject(), SIGNAL(partialProgressChanged(double)), exportProgressBar, SLOT(partialUpdate(double)));
     qRegisterMetaType<ComplexValue>("ComplexValue");
@@ -964,6 +1039,10 @@ void Interface::refreshMainWindowTerms()
     scaleAEditSlider->blockSignals(true);
     scaleREdit->blockSignals(true);
     scaleREditSlider->blockSignals(true);
+    scaleTEdit->blockSignals(true);
+    scaleTEditSlider->blockSignals(true);
+    morphEdit->blockSignals(true);
+    morphEditSlider->blockSignals(true);
     
     oldM = currFunction->getM(termIndex);
     oldN = currFunction->getN(termIndex);
@@ -975,6 +1054,10 @@ void Interface::refreshMainWindowTerms()
     scaleAEditSlider->setValue(currFunction->getScaleA() * 100);
     scaleREdit->setText(QString::number(currFunction->getScaleR()));
     scaleREditSlider->setValue(currFunction->getScaleR() * 100);
+    scaleTEdit->setText(QString::number(currFunction->getT()));
+    scaleTEditSlider->setValue(currFunction->getT() * 100);
+    morphEdit->setText(QString::number(currFunction->getMorph()));
+    morphEditSlider->setValue(currFunction->getMorph() * 100);
     
     mEdit->blockSignals(false);
     nEdit->blockSignals(false);
@@ -984,6 +1067,10 @@ void Interface::refreshMainWindowTerms()
     scaleAEditSlider->blockSignals(false);
     scaleREdit->blockSignals(false);
     scaleREditSlider->blockSignals(false);
+    scaleTEdit->blockSignals(false);
+    scaleTEditSlider->blockSignals(false);
+    morphEdit->blockSignals(false);
+    morphEditSlider->blockSignals(false);
     
     aValueLabel->setText(QString::number(currFunction->getA(termIndex)));
     rValueLabel->setText(QString::number(currFunction->getR(termIndex)));
@@ -1129,6 +1216,8 @@ void Interface::resetFunction()
     
     changeScaleR(currFunction->getScaleR());
     changeScaleA(currFunction->getScaleA());
+    changeScaleT(currFunction->getT());
+    changeMorph(currFunction->getMorph());
     
     // changeWorldHeight(DEFAULT_WORLD_HEIGHT);
     // changeWorldWidth(DEFAULT_WORLD_WIDTH);
@@ -1230,8 +1319,6 @@ void Interface::selectColorWheel()
     updatePreviewDisplay();
 }
 
-// user uploads image
-// case 9 in colorwheel.cpp
 void Interface::selectImage()
 {
     colorwheelSel->setEnabled(false);
@@ -1324,6 +1411,12 @@ void Interface::changeFunction(int index)
     resetFunction();
 }
 
+void Interface::changeFib(int index)
+{
+    currFunction->setFibonacci(index);
+    updatePreviewDisplay();
+
+}
 
 // SLOT function called when user attempts to save current settings into a wpr file
 void Interface::saveCurrWorkspace()
@@ -1405,6 +1498,8 @@ QString Interface::saveSettings(const QString &fileName, const int &actionFlag) 
     
     out << "Scaling Radius: " << QString::number(currFunction->getScaleR()) << endl;
     out << "Scaling Angle: " << QString::number(currFunction->getScaleA()) << endl;
+    out << "Scaling Time: " << QString::number(currFunction->getT()) << endl;
+    out << "Morph: " << QString::number(currFunction->getMorph()) << endl;
     
     unsigned int i;
     QString tabString(PARAMETER_SEPARATOR_LENGTH, ' ');
@@ -1446,11 +1541,12 @@ void Interface::loadFromSettings()
 
 // internal function that handles loading settings from a specified file
 QString Interface::loadSettings(const QString &fileName) {
-
+    
     //qDebug() << "load" << fileName;
 //    QMessageBox msgBox;
 //    msgBox.setText(tr("Loading from: ").append(fileName));
 //    msgBox.exec();
+    
 
     QFile inFile(fileName);
 
@@ -1475,7 +1571,7 @@ QString Interface::loadSettings(const QString &fileName) {
 
         QString imageLoadPath;
         QString loadImageName;
-        int tempint, newFunctionIndex, newColorIndex, count;
+        int tempint, newFunctionIndex, newFibIndex=-1, newColorIndex, count;
         double tempdouble;
         QColor overflowColor;
 
@@ -1508,6 +1604,7 @@ QString Interface::loadSettings(const QString &fileName) {
 
         in.readLineInto(&line);
         if (line.contains("Fibonacci")) {
+            newFibIndex = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
             in.readLineInto(&line);
         }
 
@@ -1548,14 +1645,17 @@ QString Interface::loadSettings(const QString &fileName) {
 
         in.readLineInto(&line);
         if (line.contains("Scaling Time")) {
+            tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+            scaleTEdit->blockSignals(true);
+            currFunction->setT(tempdouble);
+            scaleTEdit->setText(QString::number(tempdouble));
+            scaleTEdit->blockSignals(false);
             in.readLineInto(&line);
         }
 
-        if (line.contains("Wave Velocity")) {
-            in.readLineInto(&line);
-         }
-
         if (line.contains("Morph")) {
+            tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+            changeMorph(tempdouble);
             in.readLineInto(&line);
          }
 
@@ -1617,6 +1717,9 @@ QString Interface::loadSettings(const QString &fileName) {
              //qDebug() << scaleREdit->text();
         }
 
+        if (newFibIndex >= 0) {
+            fibSel->setCurrentIndex(newFibIndex);
+        }
 
     //
        // qDebug() << currFunction->getScaleR();
@@ -1663,6 +1766,8 @@ void Interface::updatePreviewDisplay()
     imageDataSeries->clear();
     
     snapshotButton->setEnabled(false);
+    animationButton->setEnabled(false);
+    playAnimationButton->setEnabled(false);
     
     displayProgressBar->reset();
     previewDisplayPort->paintToDisplay(disp);
@@ -1679,14 +1784,77 @@ void Interface::snapshotFunction()
     QString newFile = savedTime.toString("MM.dd.yyyy.hh.mm.ss.zzz.t").append(".wpr");
     QString filePath = saveSettings(newFile, SNAPSHOT_ACTION).append("/" + newFile);
     
-    qDebug() << "save" << filePath;
-//    QMessageBox msgBox;
-//    msgBox.setText(tr("Saving from: ").append(filePath));
-//    msgBox.exec();
+    //qDebug() << "save" << filePath;
+    QMessageBox msgBox;
+    msgBox.setText(tr("Saving from: ").append(filePath));
+    msgBox.exec();
     
     historyDisplay->triggerAddToHistory(savedTime, filePath, currFunction, currColorWheel, settings);
-    
-    
+
+    updatePreviewDisplay();
+}
+
+void Interface::animationFunction()
+{
+    isAnimExporting = true;
+    stopAnimationButton->setEnabled(true);
+
+    continueAnimationExport();
+}
+
+void Interface::continueAnimationExport()
+{
+    if (!isAnimExporting) {
+        stopAnimationButton->setEnabled(false);
+        return;
+    }
+    stopAnimationButton->setEnabled(true);
+
+    currFunction->setT(currFunction->getT() + 1);
+    if (currFunction->getT() > 200)
+        isAnimExporting = false;
+
+    if (isAnimExporting) {
+        startAnimationExport();
+        refreshMainWindowTerms();
+        updatePreviewDisplay();
+    }
+}
+
+void Interface::playAnimationFunction()
+{
+    isAnimating = true;
+    stopAnimationButton->setEnabled(true);
+
+    continueAnimation();
+}
+
+void Interface::continueAnimation()
+{
+    if (!isAnimating) {
+        stopAnimationButton->setEnabled(false);
+        return;
+    }
+
+    stopAnimationButton->setEnabled(true);
+
+    currFunction->setT(currFunction->getT() + 1);
+    if (currFunction->getT() >= 200)
+        isAnimating = false;
+
+    if (isAnimating) {
+        refreshMainWindowTerms();
+        updatePreviewDisplay();
+    }
+}
+
+void Interface::stopAnimationFunction()
+{
+    isAnimating = false;
+    isAnimExporting = false;
+    stopAnimationButton->setEnabled(false);
+    refreshMainWindowTerms();
+    updatePreviewDisplay();
 }
 
 // SLOT FUNCTIONS TO CHANGE OUTPUT IMAGE PROPERTIES
@@ -1960,6 +2128,54 @@ void Interface::changeScaleR()
     updatePreviewDisplay();
 }
 
+//changing slider values
+void Interface::changeScaleT(double val)
+{
+    currFunction->setT(val);
+    scaleTEdit->setText(QString::number(val));
+    scaleTEdit->setModified(false);
+    updatePreviewDisplay();
+}
+
+//changing edit box values
+void Interface::changeScaleT()
+{
+
+    double val = scaleTEdit->text().toDouble();
+    currFunction->setT(val);
+
+    createUndoAction(scaleTEdit, scaleTEditSlider->value(), val);
+    scaleTEditSlider->blockSignals(true);
+    scaleTEditSlider->setValue(val * 100.0);
+    scaleTEditSlider->blockSignals(false);
+    scaleTEdit->setModified(false);
+    updatePreviewDisplay();
+}
+
+//changing slider values
+void Interface::changeMorph(double val)
+{
+    currFunction->setMorph(val);
+    morphEdit->setText(QString::number(val));
+    morphEdit->setModified(false);
+    updatePreviewDisplay();
+}
+
+//changing edit box values
+void Interface::changeMorph()
+{
+
+    double val = morphEdit->text().toDouble();
+    currFunction->setMorph(val);
+
+    createUndoAction(morphEdit, morphEditSlider->value(), val);
+    morphEditSlider->blockSignals(true);
+    morphEditSlider->setValue(val * 100.0);
+    morphEditSlider->blockSignals(false);
+    morphEdit->setModified(false);
+    updatePreviewDisplay();
+}
+
 
 // SLOT FUNCTIONS TO CHANGE FREQ AND COEFF PAIRS
 void Interface::changeN(int val)
@@ -2017,16 +2233,17 @@ void Interface::startImageExport()
 {
     emit outWidthEdit->returnPressed();
     emit outHeightEdit->returnPressed();
-    
+
+    settings->OWidth = outWidthEdit->text().toDouble();
+    settings->OHeight = outHeightEdit->text().toDouble();
     aspectRatio = (double)settings->Width/settings->Height;
-    
     
     imageDimensionsPopUp->hide();
     
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),
                                                     saveloadPath,
                                                     tr("JPEG (*.jpg *.jpeg);;TIFF (*.tiff);; PNG (*.png);;PPM (*.ppm)"));
-    
+
     if (fileName == "") return;
     
     QFile inFile(fileName);
@@ -2041,7 +2258,36 @@ void Interface::startImageExport()
     QImage *output = new QImage(settings->OWidth, settings->OHeight, QImage::Format_RGB32);
     
     imageExportPort->exportImage(output, fileName);
-    
+}
+
+void Interface::startAnimationExport()
+{
+    if (!isAnimExporting)
+        return;
+
+    settings->OWidth = 800;
+    settings->OHeight = 800;
+    aspectRatio = (double)settings->Width/settings->Height;
+
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+    dir.mkdir("frames");
+    QString filePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/frames/frame";
+    QString number = QString::number((int) (currFunction->getT()));
+    QString extension = ".jpg";
+    QString fileName = filePath + number + extension;
+
+    QFile inFile(fileName);
+    if (!inFile.open(QIODevice::WriteOnly))
+        return;
+
+    exportProgressBar->resetBar(tr("Exporting Animation Frames"), imageExportPort);
+    exportProgressBar->reset();
+
+    dispLayout->insertLayout(2, exportProgressBar->layout);
+
+    QImage *output = new QImage(settings->OWidth, settings->OHeight, QImage::Format_RGB32);
+
+    imageExportPort->exportImage(output, fileName);
 }
 
 // function for error handling
@@ -2193,14 +2439,19 @@ void Interface::addTermTable()
 // pop up window to appear when image file has finished exporting
 void Interface::popUpImageExportFinished(const QString &filePath)
 {
-    QMessageBox msgBox;
+    /*QMessageBox msgBox;
     msgBox.setText(tr("The file has been successfully saved to: ").append(filePath));
     msgBox.exec();
-    
+    */
     saveloadPath = filePath;
     
     exportProgressBar->remove();
     if (!exportProgressBar) delete exportProgressBar;
+
+
+    if (isAnimExporting)
+        continueAnimationExport();
+
 }
 
 // reset the table to receive signals - prevent updating too fast
@@ -2215,6 +2466,9 @@ void Interface::resetMainWindowButton(const bool &status)
 {
     numTermsEdit->setEnabled(status);
     snapshotButton->setEnabled(status);
+    animationButton->setEnabled(status);
+    playAnimationButton->setEnabled(status);
+    stopAnimationButton->setEnabled(!status);
 }
 
 void Interface::setSnapShotWindow(HistoryDisplay* window)

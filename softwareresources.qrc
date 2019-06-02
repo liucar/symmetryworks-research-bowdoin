@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/MyFiles">
-        <file>symmetryworks.pro</file>
+        <file>fibonacci-morph.pro</file>
     </qresource>
     <qresource prefix="/Images">
         <file>Icons/zoomin.png</file>

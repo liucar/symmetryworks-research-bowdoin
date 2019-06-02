@@ -7,6 +7,8 @@
 #include <QColor>
 #include <QDebug>
 
+#define SQ(x) (x * x)  // macro squaring function for time domain functions
+
 const double pi = 3.1415926535;
 const int deg = 3;
 const double rx[deg] = {1.0,-2.0,1.0};
@@ -15,6 +17,7 @@ const double gold = (1.0+qSqrt(5.0))/2.0;
 const double ma = qSqrt(5.0/2.0);
 const double q2 = qSqrt(2.0); const double q3 = qSqrt(3.0);
 const double q7 = qSqrt(7.0);
+const double q5 = qSqrt(5.0);
 const double c2 = cos(2.0 * pi/5.0); const double s2 = sin(2.0 * pi/5.0);
 const double c4 = cos(4.0 * pi/5.0); const double s4 = sin(4.0 * pi/5.0);
 const double c6 = cos(6.0 * pi/5.0); const double s6 = sin(6.0 * pi/5.0);
@@ -22,6 +25,9 @@ const double c8 = cos(8.0 * pi/5.0); const double s8 = sin(8.0 * pi/5.0);
 const int Fib = 0;
 const int MAX_RGB = 255;
 const int MIN_RGB = 0;
+const double TPhi=1.118033989;
+//const double F1=5.0;
+//const double F2=8.0;
 
 struct vect5
 {
@@ -57,7 +63,7 @@ inline vect5 Bvect5(double a, double b, double c)
 }
 
 inline std::complex<double> ei(double in)
-{
+{   //while (in>2*pi){in=in-2*pi;};
     std::complex<double> ans(qCos(in), qSin(in));
     return ans;
 }
@@ -141,7 +147,12 @@ inline QRgb RgbFromVec3(QVector3D v)
     return color.rgb();
 }
 
-
+//int generateFib(int n)
+//{
+//    if (n <= 1)
+//        return n;
+//    return generateFib(n-1) + generateFib(n-2);
+//}
 
 
 
