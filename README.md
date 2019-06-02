@@ -1,2 +1,2 @@
-# symmetryworks-research-bowdoin
-Frank Farris - SymmetryWorks! - Bowdoin Summer Research 2016
+# fibonacci-morph
+Frank Farris - updated by Caroline Liu on 6/1/19 - SymmetryWorks! - v. Fibonacci Morph
