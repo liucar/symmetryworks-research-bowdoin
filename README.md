@@ -1,2 +1,3 @@
-# symmetryworks-research-bowdoin
-Frank Farris - SymmetryWorks! - Bowdoin Summer Research 2016
+# fibonacci-spiral
+Frank Farris - SymmetryWorks! - v. Fibonacci Spiral
+
