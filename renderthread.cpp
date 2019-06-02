@@ -91,9 +91,9 @@ void RenderThread::run()
                 //run the point through our mathematical function
                 //...then convert that complex output to a color according to our color wheel
                 
-                fout = (*currFunction)(worldX,worldY);
-                QRgb color = (*currColorWheel)(fout);
-                
+                fout = (*currFunction)(worldX,worldY);  // math function to get complex coordinate
+                QRgb color = (*currColorWheel)(fout);   // colorification from complex coordinate
+
                 if (y % 10 == 0 && x % 10 == 0) {
                     emit newImageDataPoint(fout);
                 }

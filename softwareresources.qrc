@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/MyFiles">
-        <file>symmetryworks.pro</file>
+        <file>vibrating-wallpaper.pro</file>
     </qresource>
     <qresource prefix="/Images">
         <file>Icons/zoomin.png</file>

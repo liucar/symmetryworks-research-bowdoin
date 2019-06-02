@@ -30,7 +30,7 @@
 #include <QFileDialog>
 #include <QSignalMapper>
 #include <QDateTime>
-#include <QShortCut>
+#include <QShortcut>
 #include <QAction>
 #include <QMessageBox>
 #include <QDialogButtonBox>
@@ -47,6 +47,7 @@
 #include <QHeaderView>
 #include <QToolTip>
 #include <QStandardPaths>
+#include <QPropertyAnimation>
 
 #include "historydisplay.h"
 #include "polarplane.h"
@@ -369,6 +370,7 @@ private:
 class Interface : public QWidget
 {
     Q_OBJECT
+
 public:
     Interface(QWidget *parent = 0);
     ~Interface() {;}
@@ -404,12 +406,20 @@ public:
     QVBoxLayout *globalScalingBoxLayout;
     QHBoxLayout *scaleALayout;
     QHBoxLayout *scaleRLayout;
+    QHBoxLayout *scaleTLayout;
+    QHBoxLayout *waveVelocityLayout;
     QLabel *scaleALabel;
     QLabel *scaleRLabel;
+    QLabel *scaleTLabel;
+    QLabel *waveVelocityLabel;
     QDoubleSlider *scaleAEditSlider;
     QDoubleSlider *scaleREditSlider;
+    QDoubleSlider *scaleTEditSlider;
+    QDoubleSlider *waveVelocityEditSlider;
     CustomLineEdit *scaleAEdit;
     CustomLineEdit *scaleREdit;
+    CustomLineEdit *scaleTEdit;
+    CustomLineEdit *waveVelocityEdit;
     QPushButton *scalePlaneEdit;
     
     // functionConstants SUBELEMENTS
@@ -515,9 +525,14 @@ public:
     
     // DISP SUBELEMENTS
     QPushButton *snapshotButton;
+    QPushButton *animationButton;
+    QPushButton *playAnimationButton;
+    QPushButton *stopAnimationButton;
     Display *disp;
     QVBoxLayout *dispLayout;
     QHBoxLayout *buttonLayout;
+    QHBoxLayout *animButtonLayout;
+    QHBoxLayout *animButtonControlsLayout;
     
     // SHORTCUTS
     QShortcut *updatePreviewShortcut;
@@ -592,11 +607,16 @@ signals:
     void changeScaleA(double val);
     void changeScaleR();
     void changeScaleR(double val);
+    void changeScaleT();
+    void changeScaleT(double val);
+    void changeWaveVelocity();
+    void changeWaveVelocity(double val);
     void changeOverflowColor(const QColor &color) { currColorWheel->changeOverflowColor(color); updatePreviewDisplay(); }
     
     void exportImageFunction() { imageDimensionsPopUp->show(); }
     void cancelImageExport() { imageDimensionsPopUp->hide(); }
     void startImageExport();
+    void startAnimationExport();
     
     void resetFunction();
     void loadFromSettings();
@@ -605,6 +625,11 @@ signals:
    
     void previewDisplayResetSize() {disp->resetSize();}
     void snapshotFunction();
+    void animationFunction();
+    void continueAnimationExport();
+    void playAnimationFunction();
+    void continueAnimation();
+    void stopAnimationFunction();
     void termViewPopUp();
     void addTerm();
     void updateTermTable(QObject *cell);
@@ -694,6 +719,8 @@ private:
     bool heightChanged;
     bool widthChanged;
     bool errPrint;
+    bool isAnimating;
+    bool isAnimExporting;
     
     //I/O-related variables    
     QString saveloadPath;

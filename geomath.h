@@ -7,6 +7,8 @@
 #include <QColor>
 #include <QDebug>
 
+#define SQ(x) (x * x)  // macro squaring function for time domain functions
+
 const double pi = 3.1415926535;
 const int deg = 3;
 const double rx[deg] = {1.0,-2.0,1.0};

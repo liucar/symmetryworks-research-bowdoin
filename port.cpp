@@ -2,22 +2,22 @@
 
 Port::Port(AbstractFunction *currFunction, ColorWheel *currColorWheel, int width, int height, Settings *currSettings)
 {
-
+    
     overallWidth = width;
     overallHeight = height;
     this->currFunction = currFunction;
     this->currColorWheel = currColorWheel;
     this->currSettings = currSettings;
-
+    
     output = new QImage();
     display = new Display();
-
+    
     controllerObject = new Controller(display, output);
     controller = new ControllerThread(this->currFunction, this->currColorWheel, this->currSettings, controllerObject, QSize(overallWidth, overallHeight), this);
-
+    
     controllerObject->moveToThread(controller);
     connect(controllerObject, SIGNAL(workFinished(int)), this, SLOT(handleRenderedImage(int)));
-
+    
 }
 
 
@@ -59,10 +59,10 @@ void Port::handleRenderedImage(const int &actionFlag)
             ioThread->prepareToWrite(output, filePathToExport);
             break;
     }
-
+    
    // qDebug() << "painting finished";
     emit paintingFinished(true);
-
+    
 }
 
 void Port::render(QImage *output, const int &actionFlag)

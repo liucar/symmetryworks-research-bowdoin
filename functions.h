@@ -11,12 +11,12 @@
 #include "geomath.h"
 #include "display.h"
 
-class AbstractFunction      //this is the base class for all other classes that follow in this file;
-{                           //it defines many of the member functions that we needed for all of the
+class AbstractFunction    //this is the base class for all other classes that follow in this file;
+{                         //it defines many of the member functions that we needed for all of the
 public:                   //derived classes
     
     //CONSTRUCTORS
-    AbstractFunction() { terms = 1; refresh(); }
+    AbstractFunction() { terms = 1; refresh(); T = 0; }
     AbstractFunction(unsigned int in_terms) { terms = in_terms; refresh(); }
     AbstractFunction(QVector<coeffpair> &in_coeffs, QVector<freqpair> &in_freqs);
     virtual ~AbstractFunction(){;}
@@ -29,6 +29,8 @@ public:                   //derived classes
     int getM(unsigned int &i) const;
     double getR(unsigned int &i) const;
     double getA(unsigned int &i) const;
+    double getT() { return T; }
+    double getWaveVelocity() { return waveVelocity; }
     double getScaleR() const { return scale.R(); }
     double getScaleA() const { return scale.A(); }
     
@@ -39,6 +41,8 @@ public:                   //derived classes
     void setM(unsigned int &i, int &val);
     void setR(unsigned int &i, double &val);
     void setA(unsigned int &i, double &val);
+    void setT(double Tval) { T = Tval; }
+    void setWaveVelocity(double val) { waveVelocity = val; }
     void setScaleR(double &val);
     void setScaleA(double &val);
     void setNumTerms(int &val);
@@ -53,6 +57,7 @@ protected:
     QVector<freqpair> freqs;
     unsigned int terms;
     coeffpair scale;
+    double T, waveVelocity;
     
     // PRIVATE MEMBER FUNCTIONS
     void initWithVectors(QVector<coeffpair> &in_coeffs, QVector<freqpair> &in_freqs);
