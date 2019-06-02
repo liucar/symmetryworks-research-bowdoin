@@ -491,8 +491,8 @@ void Interface::initPatternType()
     functionSel->addItem("Original");
     
     // color wheel selector
-//    colorwheelSel->addItem("IcosColor");
-//    colorwheelSel->addItem("IcosColorC");
+    colorwheelSel->addItem("IcosColor");
+    colorwheelSel->addItem("IcosColorC");
     colorwheelSel->addItem("StCol");
     colorwheelSel->addItem("StColC");
     colorwheelSel->addItem("StCol35");
@@ -1446,189 +1446,209 @@ void Interface::loadFromSettings()
 
 // internal function that handles loading settings from a specified file
 QString Interface::loadSettings(const QString &fileName) {
-    
+
     //qDebug() << "load" << fileName;
 //    QMessageBox msgBox;
 //    msgBox.setText(tr("Loading from: ").append(fileName));
 //    msgBox.exec();
-    
+
     QFile inFile(fileName);
-    
+
     if (!inFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox msgBox;
-        msgBox.setText(tr("ERROR LOADING FILE"));
+        msgBox.setText(tr("No file Selected."));
         msgBox.exec();
-        // return "";
+         return "";
     } else {
         qDebug() << "SUCCEEDED LOADING FILE";
-    }
 
-    // QDataStream in(&inFile);
-    
-    QTextStream in(&inFile);
-    QString skipString;
-    QString functionType;
-    QString functionName;
-    QString colorType;
-    QString colorName;
-    
-    QString line;
-    
-    QString imageLoadPath;
-    QString loadImageName;
-    int tempint, newFunctionIndex, newColorIndex, count;
-    double tempdouble;
-    QColor overflowColor;
-    
-   // newColorIndex = 0;
-    
-    in.readLineInto(&line);
-    settings->XCorner = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-    in.readLineInto(&line);
-    settings->YCorner = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-    in.readLineInto(&line);
-    settings->Width = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-    in.readLineInto(&line);
-    settings->Height = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-    in.readLineInto(&line);
-    settings->OWidth = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
-    in.readLineInto(&line);
-    settings->OHeight = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
-    in.readLineInto(&line);
-    functionType = (line.right(line.length() - line.lastIndexOf(" ") - 1));
-    
-    // if (functionType == "Wallpapers") {
-    // in >> skipString >> functionName;
-    in.readLineInto(&line);
-    functionName = (line.right(line.length() - line.lastIndexOf(" ") - 1));
-    newFunctionIndex = functionSel->findText(functionName, Qt::MatchExactly);
-    // }
-    // else {
-    // 	// deal with differnt types of functions
-    // }
-    
-    in.readLineInto(&line);
-    colorType = (line.right(line.length() - line.lastIndexOf(" ") - 1));
-    
-    // in >> skipString >> colorType;
-    if (colorType == "Image") {
-        newColorIndex = -1;
+        // QDataStream in(&inFile);
+
+        QTextStream in(&inFile);
+        QString skipString;
+        QString functionType;
+        QString functionName;
+        QString colorType;
+        QString colorName;
+
+        QString line;
+
+        QString imageLoadPath;
+        QString loadImageName;
+        int tempint, newFunctionIndex, newColorIndex, count;
+        double tempdouble;
+        QColor overflowColor;
+
+       // newColorIndex = 0;
+
         in.readLineInto(&line);
-        imageLoadPath = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+        settings->XCorner = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
         in.readLineInto(&line);
-        loadImageName = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+        settings->YCorner = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
         in.readLineInto(&line);
-        overflowColor = QColor(line.right(line.length() - line.lastIndexOf(" ") - 1));
-    }
-    else {
+        settings->Width = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
         in.readLineInto(&line);
-        colorName = (line.right(line.length() - line.lastIndexOf(" ") - 1));
-        newColorIndex = colorwheelSel->findText(colorName, Qt::MatchExactly);
-    }
-    
-    currFunction = functionVector[newFunctionIndex];
-    
-    in.readLineInto(&line);
-    tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-   // qDebug() << "scale R: " << tempdouble;
-    scaleREdit->blockSignals(true);
-    currFunction->setScaleR(tempdouble);
-    scaleREdit->setText(QString::number(tempdouble));
-    scaleREdit->blockSignals(false);
-    
-    in.readLineInto(&line);
-    tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
-    scaleAEdit->blockSignals(true);
-    currFunction->setScaleA(tempdouble);
-    scaleAEdit->setText(QString::number(tempdouble));
-    scaleAEdit->blockSignals(false);
-    
-    in.readLineInto(&line);
-    count = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
-    
-    currFunction->setNumTerms(count);
-    unsigned int unsignedCount = count;
-    //currFunction->refresh();
-    
-    QString separator(PARAMETER_SEPARATOR_LENGTH, ' ');
-    QStringList resultList;
-    QString resultString;
-    
-    
-    for(unsigned int i = 0; i < unsignedCount; i++)
-    {
+        settings->Height = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
         in.readLineInto(&line);
-        resultList = line.split(separator, QString::SkipEmptyParts);
-        for (int j = 1; j < resultList.size(); j++) {
-            
-            resultString = resultList.at(j);
-            
-            if (j == 1) {
-                tempint = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toInt();
-                currFunction->setN(i, tempint);
-            }
-            else if (j == 2) {
-                tempint = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toInt();
-                currFunction->setM(i, tempint);
-            }
-            else if (j == 3) {
-                tempdouble = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toDouble();
-                currFunction->setR(i, tempdouble);
-            }
-            else {
-                tempdouble = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toDouble();
-                currFunction->setA(i, tempdouble);
+        settings->OWidth = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
+        in.readLineInto(&line);
+        settings->OHeight = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
+        in.readLineInto(&line);
+        functionType = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+
+        // if (functionType == "Wallpapers") {
+        // in >> skipString >> functionName;
+        in.readLineInto(&line);
+        functionName = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+        newFunctionIndex = functionSel->findText(functionName, Qt::MatchExactly);
+        // }
+        // else {
+        // 	// deal with differnt types of functions
+        // }
+
+        in.readLineInto(&line);
+        if (line.contains("Fibonacci")) {
+            in.readLineInto(&line);
+        }
+
+        colorType = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+
+        // in >> skipString >> colorType;
+        if (colorType == "Image") {
+            newColorIndex = -1;
+            in.readLineInto(&line);
+            imageLoadPath = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+            in.readLineInto(&line);
+            loadImageName = (line.right(line.length() - line.lastIndexOf(":") - 2));
+            in.readLineInto(&line);
+            overflowColor = QColor(line.right(line.length() - line.lastIndexOf(" ") - 1));
+        }
+        else {
+            in.readLineInto(&line);
+            colorName = (line.right(line.length() - line.lastIndexOf(" ") - 1));
+            newColorIndex = colorwheelSel->findText(colorName, Qt::MatchExactly);
+        }
+
+        currFunction = functionVector[newFunctionIndex];
+
+        in.readLineInto(&line);
+        tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+       // qDebug() << "scale R: " << tempdouble;
+        scaleREdit->blockSignals(true);
+        currFunction->setScaleR(tempdouble);
+        scaleREdit->setText(QString::number(tempdouble));
+        scaleREdit->blockSignals(false);
+
+        in.readLineInto(&line);
+        tempdouble = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toDouble();
+        scaleAEdit->blockSignals(true);
+        currFunction->setScaleA(tempdouble);
+        scaleAEdit->setText(QString::number(tempdouble));
+        scaleAEdit->blockSignals(false);
+
+        in.readLineInto(&line);
+        if (line.contains("Scaling Time")) {
+            in.readLineInto(&line);
+        }
+
+        if (line.contains("Wave Velocity")) {
+            in.readLineInto(&line);
+         }
+
+        if (line.contains("Morph")) {
+            in.readLineInto(&line);
+         }
+
+        count = (line.right(line.length() - line.lastIndexOf(" ") - 1)).toInt();
+        if (numTerms != count) {
+            changeNumTerms(count);
+        }
+
+        unsigned int unsignedCount = count;
+        //currFunction->refresh();
+
+        QString separator(PARAMETER_SEPARATOR_LENGTH, ' ');
+        QStringList resultList;
+        QString resultString;
+
+
+        for(unsigned int i = 0; i < unsignedCount; i++)
+        {
+            in.readLineInto(&line);
+            resultList = line.split(separator, QString::SkipEmptyParts);
+            for (int j = 1; j < resultList.size(); j++) {
+
+                resultString = resultList.at(j);
+
+                if (j == 1) {
+                    tempint = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toInt();
+                    currFunction->setN(i, tempint);
+                }
+                else if (j == 2) {
+                    tempint = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toInt();
+                    currFunction->setM(i, tempint);
+                }
+                else if (j == 3) {
+                    tempdouble = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toDouble();
+                    currFunction->setR(i, tempdouble);
+                }
+                else {
+                    tempdouble = resultString.right(resultString.length() - resultString.lastIndexOf(" ") - 1).toDouble();
+                    currFunction->setA(i, tempdouble);
+                }
             }
         }
-    }
- 
-    inFile.close();
-    //qDebug() << scaleREdit->text();
-    
-    worldWidthEditSlider->setValue(settings->Width * 100.0);
-    worldHeightEditSlider->setValue(settings->Height * 100.0);
-    XShiftEditSlider->setValue(settings->XCorner * 100.0);
-    YShiftEditSlider->setValue(settings->YCorner * 100.0);
-    
-    if (functionSel->currentIndex() == newFunctionIndex) {
+
+        inFile.close();
         //qDebug() << scaleREdit->text();
-       // changeFunction(newFunctionIndex);
-        
+
+        worldWidthEditSlider->setValue(settings->Width * 100.0);
+        worldHeightEditSlider->setValue(settings->Height * 100.0);
+        XShiftEditSlider->setValue(settings->XCorner * 100.0);
+        YShiftEditSlider->setValue(settings->YCorner * 100.0);
+
+        if (functionSel->currentIndex() == newFunctionIndex) {
+            //qDebug() << scaleREdit->text();
+           // changeFunction(newFunctionIndex);
+
+        }
+        else {
+            functionSel->setCurrentIndex(newFunctionIndex);
+             //qDebug() << scaleREdit->text();
+        }
+
+
+    //
+       // qDebug() << currFunction->getScaleR();
+        refreshMainWindowTerms();
+        refreshTableTerms();
+
+        if (newColorIndex == -1) {
+         //   qDebug() << "no color wheel: image";
+            imageSetPath = imageLoadPath;
+            openImageName = loadImageName;
+            currColorWheel->changeOverflowColor(overflowColor);
+            fromImageButton->setChecked(true);
+            fromImageButton->clicked();
+
+        }
+        else {
+
+            fromColorWheelButton->setChecked(true);
+            colorwheelSel->setCurrentIndex(newColorIndex);
+            fromColorWheelButton->clicked();
+        }
+
+        newUpdate = true;
+        updatePreviewDisplay();
+
+        QDir stickypath(fileName);
+        stickypath.cdUp();
+        saveloadPath = stickypath.path();
+        currFileName = saveloadPath + "/" + openImageName;
+        return saveloadPath;
     }
-    else {
-        functionSel->setCurrentIndex(newFunctionIndex);
-         //qDebug() << scaleREdit->text();
-    }
-//
-   // qDebug() << currFunction->getScaleR();
-    refreshMainWindowTerms();
-    refreshTableTerms();
-    
-    if (newColorIndex == -1) {
-     //   qDebug() << "no color wheel: image";
-        imageSetPath = imageLoadPath;
-        openImageName = loadImageName;
-        currColorWheel->changeOverflowColor(overflowColor);
-        fromImageButton->setChecked(true);
-        fromImageButton->clicked();
-        
-    }
-    else {
-        
-        fromColorWheelButton->setChecked(true);
-        colorwheelSel->setCurrentIndex(newColorIndex);
-        fromColorWheelButton->clicked();
-    }
-    
-    newUpdate = true;
-    updatePreviewDisplay();
-    
-    QDir stickypath(fileName);
-    stickypath.cdUp();
-    saveloadPath = stickypath.path();
-    currFileName = saveloadPath + "/" + openImageName;
-    return saveloadPath;
-    
+
 }
 
 // updates the preview to reflect changes to the settings, function, and color wheel

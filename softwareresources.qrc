@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/MyFiles">
-        <file>wallgen.pro</file>
+        <file>symmetryworks.pro</file>
     </qresource>
     <qresource prefix="/Images">
         <file>Icons/zoomin.png</file>

@@ -32,7 +32,7 @@ public:
     void loadImage(QString filename);
     
     ColorWheel* clone();
-    
+    QImage getImage() { return image; }
     QColor getOverflowColor() { return overflowColor; }
     
 private:
@@ -43,8 +43,8 @@ private:
     QColor overflowColor;
     
     // COLOR WHEEL FUNCTIONS
-//    QRgb IcosColor(std::complex<double> zin);
-//    QRgb IcosColorC(std::complex<double> zin);
+    QRgb IcosColor(std::complex<double> zin);
+    QRgb IcosColorC(std::complex<double> zin);
     QRgb StCol(std::complex<double> zin);
     QRgb StColC(std::complex<double> zin);
     QRgb StCol35(std::complex<double> zin);
